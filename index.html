@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Хомяки: Башня Обороны</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+      text-align: center;
+      margin: 0;
+      padding: 10px;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .tower {
+      font-size: 80px;
+      margin: 10px;
+    }
+    button {
+      padding: 12px 20px;
+      margin: 8px;
+      font-size: 18px;
+      border: none;
+      border-radius: 12px;
+      background: #ffcc00;
+      color: black;
+      cursor: pointer;
+    }
+    button:hover { background: #ffd633; }
+    .menu {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .shop-item, .hamster {
+      background: rgba(255,255,255,0.2);
+      padding: 10px;
+      margin: 8px;
+      border-radius: 12px;
+      width: 140px;
+    }
+    .wave {
+      font-size: 22px;
+      font-weight: bold;
+      color: #ff4444;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🐹 Хомяки: Башня Обороны 🐹</h1>
+
+    <div id="main-menu">
+      <p>Золото: <span id="gold">200</span> 🪙</p>
+      <p>Эпизод: <span id="episode">1</span></p>
+      <p class="tower">🏰 Башня: <span id="tower-hp">100</span> ❤️</p>
+
+      <div class="menu">
+        <button onclick="showShop()">🛒 Магазин</button>
+        <button onclick="showInventory()">🎒 Инвентарь</button>
+        <button onclick="startBattle()" style="background:#ff4444;color:white;">⚔️ Защитить Башню</button>
+      </div>
+    </div>
+
+    <!-- Магазин -->
+    <div id="shop" style="display:none;">
+      <h2>🛒 Магазин</h2>
+      <div id="shop-items"></div>
+      <button onclick="backToMenu()">🔙 Назад</button>
+    </div>
+
+    <!-- Инвентарь -->
+    <div id="inventory" style="display:none;">
+      <h2>🎒 Твои хомяки</h2>
+      <div id="inv-items"></div>
+      <button onclick="backToMenu()">🔙 Назад</button>
+    </div>
+
+    <!-- Битва -->
+    <div id="battle-screen" style="display:none;">
+      <h2 class="wave">Эпизод <span id="battle-episode">1</span></h2>
+      <p>🏰 Башня: <span id="battle-tower-hp">100</span> ❤️</p>
+      <p>🐹 Хомяки в бою: <span id="hamsters-count">0</span></p>
+
+      <div id="battle-log" style="background:rgba(0,0,0,0.4); height:200px; overflow-y:auto; margin:15px; padding:10px; text-align:left; border-radius:10px;"></div>
+
+      <button onclick="endBattle()" style="background:#ff4444;color:white;">Завершить битву</button>
+    </div>
+
+    <p style="margin-top:30px; font-size:14px;">Простая версия HTML-игры</p>
+  </div>
+
+  <script>
+    let gold = 200;
+    let episode = 1;
+    let towerHP = 100;
+    let hamsters = { warrior: 2, archer: 1 };
+
+    const hamsterTypes = {
+      warrior: { name: "⚔️ Воин", dmg: 18, price: 60 },
+      archer: { name: "🏹 Лучник", dmg: 28, price: 90 },
+      mage: { name: "🔥 Маг", dmg: 45, price: 130 },
+      tank: { name: "🛡️ Танк", dmg: 12, price: 110 }
+    };
+
+    function updateUI() {
+      document.getElementById("gold").textContent = gold;
+      document.getElementById("episode").textContent = episode;
+      document.getElementById("tower-hp").textContent = towerHP;
+    }
+
+    function showShop() {
+      document.getElementById("main-menu").style.display = "none";
+      document.getElementById("shop").style.display = "block";
+
+      let html = "";
+      for (let key in hamsterTypes) {
+        let h = hamsterTypes[key];
+        html += `
+          <div class="shop-item">
+            <p><strong>${h.name}</strong></p>
+            <p>Урон: ${h.dmg}</p>
+            <p>Цена: ${h.price} 🪙</p>
+            <button onclick="buyHamster('${key}')">Купить</button>
+          </div>`;
+      }
+      document.getElementById("shop-items").innerHTML = html;
+    }
+
+    function buyHamster(type) {
+      let h = hamsterTypes[type];
+      if (gold >= h.price) {
+        gold -= h.price;
+        hamsters[type] = (hamsters[type] || 0) + 1;
+        updateUI();
+        alert(`✅ Куплен ${h.name}!`);
+      } else {
+        alert("Недостаточно золота!");
+      }
+    }
+
+    function showInventory() {
+      document.getElementById("main-menu").style.display = "none";
+      document.getElementById("inventory").style.display = "block";
+
+      let html = "";
+      for (let key in hamsters) {
+        if (hamsters[key] > 0) {
+          html += `<p><strong>${hamsterTypes[key].name}</strong> × ${hamsters[key]}</p>`;
+        }
+      }
+      if (html === "") html = "<p>У тебя пока нет хомяков</p>";
+      document.getElementById("inv-items").innerHTML = html;
+    }
+
+    function backToMenu() {
+      document.getElementById("shop").style.display = "none";
+      document.getElementById("inventory").style.display = "none";
+      document.getElementById("battle-screen").style.display = "none";
+      document.getElementById("main-menu").style.display = "block";
+      updateUI();
+    }
+
+    function startBattle() {
+      document.getElementById("main-menu").style.display = "none";
+      document.getElementById("battle-screen").style.display = "block";
+
+      document.getElementById("battle-episode").textContent = episode;
+      document.getElementById("battle-tower-hp").textContent = towerHP;
+
+      let totalDmg = 0;
+      let count = 0;
+      for (let key in hamsters) {
+        if (hamsters[key]) {
+          totalDmg += hamsterTypes[key].dmg * hamsters[key];
+          count += hamsters[key];
+        }
+      }
+
+      document.getElementById("hamsters-count").textContent = count;
+
+      let log = document.getElementById("battle-log");
+      log.innerHTML = `<p>⚔️ Битва эпизода ${episode} началась!</p>`;
+
+      // Симуляция волн
+      let waves = 5;
+      let i = 0;
+      let interval = setInterval(() => {
+        i++;
+        if (i > waves) {
+          clearInterval(interval);
+          finishBattle(totalDmg);
+          return;
+        }
+        log.innerHTML += `<p>🌊 Волна ${i}/${waves}...</p>`;
+        log.scrollTop = log.scrollHeight;
+      }, 800);
+    }
+
+    function finishBattle(totalDamage) {
+      let log = document.getElementById("battle-log");
+      let enemyPower = episode * 80 + 100;
+
+      if (totalDamage > enemyPower) {
+        let reward = 70 + episode * 40;
+        gold += reward;
+        log.innerHTML += `<p style="color:gold;">🎉 ПОБЕДА! +${reward} золота</p>`;
+        episode++;
+      } else {
+        let damage = Math.floor(enemyPower - totalDamage) + 20;
+        towerHP = Math.max(0, towerHP - damage);
+        log.innerHTML += `<p style="color:red;">💥 Поражение... Башня потеряла ${damage} HP</p>`;
+      }
+
+      if (towerHP <= 0) {
+        log.innerHTML += `<p style="color:red; font-size:20px;">🏰 БАШНЯ УНИЧТОЖЕНА! ИГРА ОКОНЧЕНА</p>`;
+      }
+
+      updateUI();
+    }
+
+    function endBattle() {
+      backToMenu();
+    }
+
+    // Старт
+    updateUI();
+  </script>
+</body>
+</html>

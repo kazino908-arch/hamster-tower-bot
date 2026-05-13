@@ -17,7 +17,7 @@
       position: relative;
       width: 100%;
       max-width: 420px;
-      height: 560px;
+      height: 580px;
       background: linear-gradient(#1e4d2b, #2e7a3f);
       border: 6px solid #444;
       margin: 15px auto;
@@ -28,55 +28,56 @@
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
-      width: 120px;
+      width: 110px;
       height: 100%;
       background: linear-gradient(#f1c40f, #e67e22);
-      border-left: 10px solid #d4a017;
-      border-right: 10px solid #d4a017;
+      border-left: 12px solid #d4a017;
+      border-right: 12px solid #d4a017;
     }
     .slot {
       position: absolute;
-      bottom: 25px;
-      width: 70px;
-      height: 70px;
+      bottom: 30px;
+      width: 38px;        /* в 2 раза меньше */
+      height: 38px;
       background: rgba(60,60,60,0.95);
-      border: 4px solid #ccc;
-      border-radius: 15px;
+      border: 3px solid #ccc;
+      border-radius: 10px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 36px;
+      font-size: 24px;
     }
-    .slot1 { left: 70px; }
-    .slot2 { right: 70px; }
+    .slot1 { left: 95px; }
+    .slot2 { right: 95px; }
 
     .enemy {
       position: absolute;
-      font-size: 40px;
+      font-size: 38px;
       left: 50%;
       transform: translateX(-50%);
-      transition: top 5s linear;
+      transition: top 8s linear;   /* медленнее */
     }
     .enemy-hp {
       position: absolute;
-      top: -8px;
+      top: -10px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,0.8);
       color: lime;
-      font-size: 14px;
-      padding: 2px 6px;
-      border-radius: 8px;
+      font-size: 13px;
+      padding: 1px 6px;
+      border-radius: 6px;
     }
-
-    .projectile {
+    .message {
       position: absolute;
-      width: 12px;
-      height: 12px;
-      background: #00ffff;
-      border-radius: 50%;
-      box-shadow: 0 0 8px cyan;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 28px;
+      color: gold;
+      text-shadow: 0 0 10px black;
+      display: none;
     }
   </style>
 </head>
@@ -91,14 +92,16 @@
     </div>
 
     <div id="battle-screen" style="display:none;">
-      <p>Волна: <span id="wave">1</span> | Врагов: <span id="enemies-left">0</span></p>
+      <p>Волна: <span id="wave">1</span> | Осталось: <span id="enemies-left">10</span></p>
 
       <div id="battle-field">
         <div class="road"></div>
-        <div style="position:absolute; bottom:110px; left:50%; transform:translateX(-50%); font-size:65px;">🏰</div>
+        <div style="position:absolute; bottom:105px; left:50%; transform:translateX(-50%); font-size:70px;">🏰</div>
 
         <div class="slot slot1" onclick="placeHamster(0)"></div>
         <div class="slot slot2" onclick="placeHamster(1)"></div>
+
+        <div id="win-message" class="message">🎉 Первый этап закончен!</div>
       </div>
 
       <button onclick="startWave()" style="background:#27ae60;color:white;font-size:22px;padding:12px 40px;">▶️ Начать волну</button>
@@ -109,14 +112,11 @@
   <script>
     let gold = 200, episode = 1, towerHP = 100;
     let hamsters = { warrior: 2, archer: 1 };
-    let placed = [];           // [null, "warrior", ...]
+    let placed = [null, null];
     let enemies = [];
-    let attackIntervals = [];
-
-    const types = {
-      warrior: { name: "⚔️", color: "orange" },
-      archer:  { name: "🏹", color: "cyan" }
-    };
+    let totalKilled = 0;
+    let currentGroup = 0;
+    let groups = [2, 3, 5];
 
     function updateUI() {
       document.getElementById("gold").textContent = gold;
@@ -126,39 +126,48 @@
     function enterBattle() {
       document.getElementById("main-menu").style.display = "none";
       document.getElementById("battle-screen").style.display = "block";
-      placed = [null, null];
-      document.querySelectorAll('.slot').forEach(s => s.innerHTML = '');
-      enemies = [];
+      resetWave();
       updateUI();
+    }
+
+    function resetWave() {
+      enemies = [];
+      totalKilled = 0;
+      currentGroup = 0;
+      document.getElementById("enemies-left").textContent = 10;
+      document.getElementById("win-message").style.display = "none";
+      document.querySelectorAll('.slot').forEach(s => s.innerHTML = '');
+      placed = [null, null];
     }
 
     function exitBattle() {
       document.getElementById("battle-screen").style.display = "none";
       document.getElementById("main-menu").style.display = "block";
-      attackIntervals.forEach(i => clearInterval(i));
-      attackIntervals = [];
     }
 
     function placeHamster(index) {
       let avail = Object.keys(hamsters).filter(t => hamsters[t] > 0);
-      if (!avail.length) return alert("Нет хомяков!");
+      if (!avail.length) return alert("Нет хомяков в инвентаре!");
 
-      let type = prompt("Кого поставить?\n- warrior (⚔️)\n- archer (🏹)", avail[0]);
-      if (type && hamsters[type]) {
+      let type = prompt("Кого поставить?\n- warrior (⚔️ Мечник)\n- archer (🏹 Лучник)", avail[0]);
+      if (type && hamsters[type] > 0) {
         hamsters[type]--;
         placed[index] = type;
-        document.querySelectorAll('.slot')[index].innerHTML = types[type].name;
+        document.querySelectorAll('.slot')[index].innerHTML = type === "warrior" ? "⚔️" : "🏹";
       }
     }
 
     function startWave() {
-      let wave = parseInt(document.getElementById("wave").textContent);
-      let count = wave === 1 ? 2 : wave === 2 ? 3 : 5;
+      resetWave();
+      spawnNextGroup();
+    }
 
-      document.getElementById("enemies-left").textContent = count;
+    function spawnNextGroup() {
+      if (currentGroup >= groups.length) return;
 
+      let count = groups[currentGroup];
       for (let i = 0; i < count; i++) {
-        setTimeout(() => spawnEnemy(), i * 900);
+        setTimeout(() => spawnEnemy(), i * 600);
       }
     }
 
@@ -167,89 +176,69 @@
       let enemy = document.createElement("div");
       enemy.className = "enemy";
       enemy.innerHTML = `🐛<div class="enemy-hp">3</div>`;
-      enemy.style.top = "-50px";
+      enemy.style.top = "-40px";
       enemy.dataset.hp = 3;
       field.appendChild(enemy);
       enemies.push(enemy);
 
-      setTimeout(() => { enemy.style.top = "480px"; }, 50);
-
-      // Когда враг доходит до базы
       setTimeout(() => {
-        if (enemy.parentNode) {
-          enemy.parentNode.removeChild(enemy);
-          enemies = enemies.filter(e => e !== enemy);
-          towerHP = Math.max(0, towerHP - 8);
-          document.getElementById("tower-hp").textContent = towerHP;
-          if (towerHP <= 0) alert("💥 Башня уничтожена!");
-        }
-      }, 5200);
+        enemy.style.top = "410px";   // останавливаются перед башней
+      }, 100);
     }
 
-    // === АВТОМАТИЧЕСКИЕ АТАКИ ХОМЯКОВ ===
+    // Автоматические атаки хомяков
     setInterval(() => {
       if (document.getElementById("battle-screen").style.display === "none") return;
 
-      placed.forEach((type, index) => {
-        if (!type) return;
-
-        let slot = document.querySelectorAll('.slot')[index];
-        let rect = slot.getBoundingClientRect();
-        let fieldRect = document.getElementById("battle-field").getBoundingClientRect();
+      placed.forEach((type, i) => {
+        if (!type || enemies.length === 0) return;
 
         if (type === "warrior") {
-          // Ближний бой + Ветряная атака
           enemies.forEach(enemy => {
-            let eRect = enemy.getBoundingClientRect();
-            if (Math.abs(eRect.top - rect.top) < 120) {   // в ближнем радиусе
-              let hp = parseFloat(enemy.dataset.hp);
-              hp -= 1;
-              enemy.dataset.hp = hp;
-              enemy.querySelector('.enemy-hp').textContent = Math.ceil(hp);
-
-              if (hp <= 0) {
-                enemy.remove();
-                enemies = enemies.filter(e => e !== enemy);
-              }
-            }
+            let hp = parseFloat(enemy.dataset.hp) - 0.8;
+            enemy.dataset.hp = hp;
+            enemy.querySelector('.enemy-hp').textContent = hp.toFixed(1);
+            if (hp <= 0) killEnemy(enemy);
           });
-
-          // Ветряная атака каждые 5 секунд (симулируем)
-          if (Math.random() < 0.2) {
-            enemies.forEach(enemy => {
-              let hp = parseFloat(enemy.dataset.hp) - 2;
-              enemy.dataset.hp = hp;
-              enemy.querySelector('.enemy-hp').textContent = Math.ceil(hp);
-              if (hp <= 0) enemy.remove();
-            });
-          }
         }
 
         if (type === "archer") {
-          // Стрельба каждую секунду
-          if (enemies.length > 0) {
-            let target = enemies[enemies.length - 1]; // самый дальний (нижний)
-            let hp = parseFloat(target.dataset.hp) - 0.5;
+          let target = enemies[0]; // бьёт самого верхнего (дальнего)
+          if (target) {
+            let hp = parseFloat(target.dataset.hp) - 0.6;
             target.dataset.hp = hp;
             target.querySelector('.enemy-hp').textContent = hp.toFixed(1);
-
-            if (hp <= 0) target.remove();
-
-            // Визуал снаряда
-            let proj = document.createElement("div");
-            proj.className = "projectile";
-            proj.style.left = (rect.left - fieldRect.left + 30) + "px";
-            proj.style.top = (rect.top - fieldRect.top + 20) + "px";
-            document.getElementById("battle-field").appendChild(proj);
-
-            setTimeout(() => proj.remove(), 600);
+            if (hp <= 0) killEnemy(target);
           }
         }
       });
+    }, 800);
 
-      // Обновляем счётчик врагов
-      document.getElementById("enemies-left").textContent = enemies.length;
-    }, 1000);
+    function killEnemy(enemy) {
+      if (!enemy.parentNode) return;
+      enemy.parentNode.removeChild(enemy);
+      enemies = enemies.filter(e => e !== enemy);
+      totalKilled++;
+      document.getElementById("enemies-left").textContent = 10 - totalKilled;
+
+      // Проверка на завершение группы
+      if (enemies.length === 0 && totalKilled < 10) {
+        currentGroup++;
+        setTimeout(spawnNextGroup, 800);
+      }
+
+      // Победа в этапе
+      if (totalKilled >= 10) {
+        document.getElementById("win-message").style.display = "block";
+        setTimeout(() => {
+          alert("🎉 Первый этап закончен!\nНаграда: +150 золота");
+          gold += 150;
+          episode++;
+          updateUI();
+          exitBattle();
+        }, 1500);
+      }
+    }
 
     updateUI();
   </script>

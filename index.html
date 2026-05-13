@@ -13,153 +13,141 @@
       padding: 10px;
       text-align: center;
     }
-    .container { max-width: 700px; margin: 0 auto; }
-
     #battle-field {
       position: relative;
       width: 100%;
-      max-width: 400px;
-      height: 520px;
+      max-width: 420px;
+      height: 560px;
       background: linear-gradient(#1e4d2b, #2e7a3f);
-      border: 5px solid #555;
+      border: 6px solid #444;
       margin: 15px auto;
       overflow: hidden;
       border-radius: 15px;
     }
-
-    /* Жёлтая дорога */
     .road {
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
-      width: 110px;
+      width: 120px;
       height: 100%;
       background: linear-gradient(#f1c40f, #e67e22);
-      border-left: 8px solid #d4a017;
-      border-right: 8px solid #d4a017;
+      border-left: 10px solid #d4a017;
+      border-right: 10px solid #d4a017;
     }
-
     .slot {
       position: absolute;
-      bottom: 20px;
-      width: 65px;
-      height: 65px;
-      background: rgba(70,70,70,0.9);
-      border: 4px solid #bbb;
-      border-radius: 12px;
+      bottom: 25px;
+      width: 70px;
+      height: 70px;
+      background: rgba(60,60,60,0.95);
+      border: 4px solid #ccc;
+      border-radius: 15px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 32px;
+      font-size: 36px;
     }
-
-    .slot1 { left: 80px; }
-    .slot2 { right: 80px; }
+    .slot1 { left: 70px; }
+    .slot2 { right: 70px; }
 
     .enemy {
       position: absolute;
-      font-size: 38px;
-      transition: top 4s linear;
+      font-size: 40px;
       left: 50%;
       transform: translateX(-50%);
+      transition: top 5s linear;
     }
-
-    .base {
+    .enemy-hp {
       position: absolute;
-      bottom: 100px;
+      top: -8px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 60px;
-      filter: drop-shadow(0 0 8px gold);
+      background: rgba(0,0,0,0.7);
+      color: lime;
+      font-size: 14px;
+      padding: 2px 6px;
+      border-radius: 8px;
     }
 
-    button {
-      padding: 12px 25px;
-      margin: 8px;
-      font-size: 18px;
-      border-radius: 12px;
+    .projectile {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: #00ffff;
+      border-radius: 50%;
+      box-shadow: 0 0 8px cyan;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🐹 Хомяки: Башня Обороны 🏰</h1>
+    <h1>🐹 Хомяки: Башня Обороны</h1>
 
     <div id="main-menu">
       <p>Золото: <span id="gold">200</span> 🪙 | Эпизод: <span id="episode">1</span></p>
       <p>🏰 Башня: <span id="tower-hp">100</span> ❤️</p>
-
-      <button onclick="showShop()">🛒 Магазин</button>
-      <button onclick="showInventory()">🎒 Инвентарь</button>
-      <button onclick="enterBattle()" style="background:#e74c3c;color:white;">🛡️ Защитить башню</button>
+      <button onclick="enterBattle()" style="background:#e74c3c;color:white;padding:15px 30px;font-size:20px;">🛡️ Защитить башню</button>
     </div>
 
-    <!-- Поле боя -->
     <div id="battle-screen" style="display:none;">
-      <p>Волна: <span id="wave">1</span> | Врагов осталось: <span id="enemies-left">0</span></p>
+      <p>Волна: <span id="wave">1</span> | Врагов: <span id="enemies-left">0</span></p>
 
       <div id="battle-field">
         <div class="road"></div>
-        <div class="base">🏰</div>
+        <div style="position:absolute; bottom:110px; left:50%; transform:translateX(-50%); font-size:65px;">🏰</div>
 
-        <!-- Слоты для хомяков -->
         <div class="slot slot1" onclick="placeHamster(0)"></div>
         <div class="slot slot2" onclick="placeHamster(1)"></div>
       </div>
 
-      <button onclick="startWave()" style="background:#27ae60;color:white;font-size:20px;">▶️ Начать волну</button>
+      <button onclick="startWave()" style="background:#27ae60;color:white;font-size:22px;padding:12px 40px;">▶️ Начать волну</button>
       <button onclick="exitBattle()">🔙 Выйти</button>
     </div>
   </div>
 
   <script>
-    let gold = 200;
-    let episode = 1;
-    let towerHP = 100;
-    let hamsters = { warrior: 2, archer: 1 }; // инвентарь
+    let gold = 200, episode = 1, towerHP = 100;
+    let hamsters = { warrior: 2, archer: 1 };
+    let placed = [];           // [null, "warrior", ...]
+    let enemies = [];
+    let attackIntervals = [];
 
-    const hamsterTypes = {
-      warrior: { name: "⚔️", dmg: 12 },
-      archer: { name: "🏹", dmg: 18 },
-      mage: { name: "🔥", dmg: 25 }
+    const types = {
+      warrior: { name: "⚔️", color: "orange" },
+      archer:  { name: "🏹", color: "cyan" }
     };
-
-    let placed = [];        // размещённые хомяки
-    let activeEnemies = [];
-    let gameInterval = null;
-    let currentWaveEnemies = 0;
 
     function updateUI() {
       document.getElementById("gold").textContent = gold;
-      document.getElementById("episode").textContent = episode;
       document.getElementById("tower-hp").textContent = towerHP;
     }
 
     function enterBattle() {
       document.getElementById("main-menu").style.display = "none";
       document.getElementById("battle-screen").style.display = "block";
-      placed = [];
+      placed = [null, null];
       document.querySelectorAll('.slot').forEach(s => s.innerHTML = '');
+      enemies = [];
       updateUI();
     }
 
     function exitBattle() {
       document.getElementById("battle-screen").style.display = "none";
       document.getElementById("main-menu").style.display = "block";
-      if (gameInterval) clearInterval(gameInterval);
+      attackIntervals.forEach(i => clearInterval(i));
+      attackIntervals = [];
     }
 
     function placeHamster(index) {
-      let available = Object.keys(hamsters).filter(t => hamsters[t] > 0);
-      if (available.length === 0) return alert("Нет хомяков в инвентаре!");
+      let avail = Object.keys(hamsters).filter(t => hamsters[t] > 0);
+      if (!avail.length) return alert("Нет хомяков!");
 
-      let type = prompt("Выбери хомяка:\n" + available.map(t => `- ${hamsterTypes[t].name} (${t})`).join("\n"), available[0]);
-
-      if (type && hamsters[type] > 0) {
+      let type = prompt("Кого поставить?\n- warrior (⚔️)\n- archer (🏹)", avail[0]);
+      if (type && hamsters[type]) {
         hamsters[type]--;
         placed[index] = type;
-        document.querySelectorAll('.slot')[index].innerHTML = hamsterTypes[type].name;
+        document.querySelectorAll('.slot')[index].innerHTML = types[type].name;
       }
     }
 
@@ -167,50 +155,102 @@
       let wave = parseInt(document.getElementById("wave").textContent);
       let count = wave === 1 ? 2 : wave === 2 ? 3 : 5;
 
-      currentWaveEnemies = count;
       document.getElementById("enemies-left").textContent = count;
 
-      let field = document.getElementById("battle-field");
-
       for (let i = 0; i < count; i++) {
-        setTimeout(() => {
-          spawnEnemy(field);
-        }, i * 800);
+        setTimeout(() => spawnEnemy(), i * 900);
       }
     }
 
-    function spawnEnemy(field) {
+    function spawnEnemy() {
+      let field = document.getElementById("battle-field");
       let enemy = document.createElement("div");
       enemy.className = "enemy";
-      enemy.textContent = ["🐛", "🐜", "🦟", "🕷️"][Math.floor(Math.random()*4)];
-      enemy.style.top = "-40px";
+      enemy.innerHTML = `🐛<div class="enemy-hp">3</div>`;
+      enemy.style.top = "-50px";
+      enemy.dataset.hp = 3;
       field.appendChild(enemy);
-      activeEnemies.push(enemy);
+      enemies.push(enemy);
 
-      // Движение вниз
-      setTimeout(() => {
-        enemy.style.top = "420px";
-      }, 100);
+      setTimeout(() => { enemy.style.top = "480px"; }, 50);
 
-      // Когда доходит до базы
+      // Когда враг доходит до базы
       setTimeout(() => {
         if (enemy.parentNode) {
           enemy.parentNode.removeChild(enemy);
-          activeEnemies = activeEnemies.filter(e => e !== enemy);
-
-          // Урон базе
-          towerHP = Math.max(0, towerHP - 5);
+          enemies = enemies.filter(e => e !== enemy);
+          towerHP = Math.max(0, towerHP - 8);
           document.getElementById("tower-hp").textContent = towerHP;
-
-          if (towerHP <= 0) {
-            alert("💥 Башня уничтожена! Игра окончена.");
-            exitBattle();
-          }
+          if (towerHP <= 0) alert("💥 Башня уничтожена!");
         }
-      }, 4200);
+      }, 5200);
     }
 
-    // Запуск
+    // === АВТОМАТИЧЕСКИЕ АТАКИ ХОМЯКОВ ===
+    setInterval(() => {
+      if (document.getElementById("battle-screen").style.display === "none") return;
+
+      placed.forEach((type, index) => {
+        if (!type) return;
+
+        let slot = document.querySelectorAll('.slot')[index];
+        let rect = slot.getBoundingClientRect();
+        let fieldRect = document.getElementById("battle-field").getBoundingClientRect();
+
+        if (type === "warrior") {
+          // Ближний бой + Ветряная атака
+          enemies.forEach(enemy => {
+            let eRect = enemy.getBoundingClientRect();
+            if (Math.abs(eRect.top - rect.top) < 120) {   // в ближнем радиусе
+              let hp = parseFloat(enemy.dataset.hp);
+              hp -= 1;
+              enemy.dataset.hp = hp;
+              enemy.querySelector('.enemy-hp').textContent = Math.ceil(hp);
+
+              if (hp <= 0) {
+                enemy.remove();
+                enemies = enemies.filter(e => e !== enemy);
+              }
+            }
+          });
+
+          // Ветряная атака каждые 5 секунд (симулируем)
+          if (Math.random() < 0.2) {
+            enemies.forEach(enemy => {
+              let hp = parseFloat(enemy.dataset.hp) - 2;
+              enemy.dataset.hp = hp;
+              enemy.querySelector('.enemy-hp').textContent = Math.ceil(hp);
+              if (hp <= 0) enemy.remove();
+            });
+          }
+        }
+
+        if (type === "archer") {
+          // Стрельба каждую секунду
+          if (enemies.length > 0) {
+            let target = enemies[enemies.length - 1]; // самый дальний (нижний)
+            let hp = parseFloat(target.dataset.hp) - 0.5;
+            target.dataset.hp = hp;
+            target.querySelector('.enemy-hp').textContent = hp.toFixed(1);
+
+            if (hp <= 0) target.remove();
+
+            // Визуал снаряда
+            let proj = document.createElement("div");
+            proj.className = "projectile";
+            proj.style.left = (rect.left - fieldRect.left + 30) + "px";
+            proj.style.top = (rect.top - fieldRect.top + 20) + "px";
+            document.getElementById("battle-field").appendChild(proj);
+
+            setTimeout(() => proj.remove(), 600);
+          }
+        }
+      });
+
+      // Обновляем счётчик врагов
+      document.getElementById("enemies-left").textContent = enemies.length;
+    }, 1000);
+
     updateUI();
   </script>
 </body>

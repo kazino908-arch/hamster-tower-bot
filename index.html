@@ -2,105 +2,88 @@
 <html lang="ua">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Humster Tower Defens</title>
+  <title>Hamster TD: Ultimate 100 Levels</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #0b1e3d; color: white; margin: 0; padding: 10px; text-align: center; }
+    body { font-family: Arial, sans-serif; background: #0b1e3d; color: white; margin: 0; padding: 0; text-align: center; }
+
+    /* ФОН МЕНЮ */
+    #main-menu {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: url('Gemini_Generated_Image_fv18ekfv18ekfv18.png') no-repeat center center;
+      background-size: cover; display: flex; align-items: center; justify-content: center; z-index: 1000;
+    }
+    .menu-panel { background: rgba(0, 0, 0, 0.85); padding: 30px; border-radius: 20px; border: 3px solid #f1c40f; }
+
     #battle-field {
-      position: relative; width: 100%; max-width: 420px; height: 580px;
+      position: relative; width: 100%; max-width: 420px; height: 600px;
       background: linear-gradient(#1e4d2b, #2e7a3f); border: 6px solid #444;
-      margin: 15px auto; overflow: hidden; border-radius: 15px; cursor: crosshair;
+      margin: 10px auto; overflow: hidden; border-radius: 15px; cursor: crosshair;
     }
-    .road {
-      position: absolute; left: 50%; transform: translateX(-50%);
-      width: 110px; height: 100%;
-      background: linear-gradient(#f1c40f, #e67e22);
-      border-left: 12px solid #d4a017; border-right: 12px solid #d4a017;
-    }
+    .road { position: absolute; left: 50%; transform: translateX(-50%); width: 110px; height: 100%; background: #d4a017; border-left: 10px solid #b8860b; border-right: 10px solid #b8860b; }
 
-    .slot {
-      position: absolute; bottom: 35px; width: 75px; height: 75px;
-      background: rgba(255, 255, 255, 0.15); border: 2px dashed rgba(255, 255, 255, 0.5);
-      border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center;
-      z-index: 10; overflow: visible; transition: all 0.3s ease;
-    }
-    .slot.hidden-border { background: transparent !important; border: none !important; }
-    .slot img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover; /* Це розтягне картинку, щоб вона заповнила весь слот */
-      display: block;
-      border-radius: 12px; /* Щоб картинка мала такі ж закруглені кути, як і слот */
-    }
-    .slot1 { left: 65px; }
-    .slot2 { right: 65px; }
+    /* ЗАМОК */
+    .base-container { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); z-index: 10; display: flex; flex-direction: column; align-items: center; }
+    .base-img { width: 240px; height: auto; }
+    .hp-bar-bg { width: 150px; height: 12px; background: #222; border: 2px solid #fff; border-radius: 6px; overflow: hidden; margin-bottom: 5px; }
+    #hp-fill { height: 100%; background: linear-gradient(to right, #ff3e3e, #ff0000); width: 100%; transition: width 0.3s; }
 
-    /* ВЕЛИКИЙ ЗАМОК */
-    .base-container { position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); z-index: 3; display: flex; flex-direction: column; align-items: center; }
-    .base-img { width: 240px; height: auto; display: block; }
-    .tower-hp-container { width: 120px; height: 12px; background: #222; border: 2px solid #fff; border-radius: 5px; overflow: hidden; margin-bottom: 5px; }
-    #tower-hp-fill { width: 100%; height: 100%; background: linear-gradient(to right, #ff3e3e, #ff0000); transition: width 0.3s ease; }
+    /* ХОМ'ЯКИ ТА СЛОТИ */
+    .slot { position: absolute; bottom: 40px; width: 80px; height: 80px; background: rgba(255,255,255,0.1); border: 2px dashed #fff; border-radius: 15px; z-index: 11; display: flex; align-items: center; justify-content: center; }
+    .slot1 { left: 50px; } .slot2 { right: 50px; }
+    .slot img { width: 120%; height: 120%; object-fit: contain; }
+    .hidden-border { border: none !important; background: transparent !important; }
 
-    /* МЕНЮ ВИБОРУ ТА ЗДІБНОСТІ */
-    #selection-menu { position: absolute; bottom: 130px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); padding: 10px; border-radius: 15px; display: none; gap: 15px; z-index: 200; border: 2px solid #fff; }
-    .select-card { background: #444; padding: 8px; border-radius: 8px; cursor: pointer; width: 65px; font-size: 10px; }
-    .select-card img { width: 100%; border-radius: 5px; }
+    #selection-menu { position: absolute; bottom: 140px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.9); padding: 10px; border-radius: 15px; display: none; gap: 10px; z-index: 200; border: 2px solid #fff; }
+    .select-card { background: #444; padding: 5px; border-radius: 8px; cursor: pointer; width: 60px; font-size: 10px; }
+    .select-card img { width: 100%; }
 
-    .ability-buttons { position: absolute; left: 10px; top: 150px; display: flex; flex-direction: column; gap: 10px; z-index: 100; }
+    /* ЗДІБНОСТІ */
+    .ability-buttons { position: absolute; left: 10px; top: 120px; display: flex; flex-direction: column; gap: 10px; z-index: 100; }
     .ability-btn { width: 65px; height: 65px; background: #333; border: 3px solid #666; border-radius: 12px; display: none; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; cursor: pointer; }
+    .ability-btn.ready { border-color: #f1c40f; box-shadow: 0 0 10px #f1c40f; }
     .ability-btn.targeting { border-color: #00ffff; box-shadow: 0 0 20px #00ffff; }
 
-    .charge-bar-container { position: absolute; bottom: 115px; width: 75px; height: 8px; background: #222; border: 1px solid #666; border-radius: 4px; overflow: hidden; display: none; }
-    .charge-bar { height: 100%; background: linear-gradient(#ffd700, #ffaa00); width: 0%; }
+    .charge-container { position: absolute; bottom: 125px; width: 70px; height: 8px; background: #222; border: 1px solid #666; border-radius: 4px; display: none; }
+    .charge-fill { height: 100%; background: #ffd700; width: 0%; }
+
+    /* ВОРОГИ */
+    .enemy { position: absolute; font-size: 40px; z-index: 5; display: flex; flex-direction: column; align-items: center; transition: top 0.05s linear; }
+    .enemy-hp { background: rgba(0,0,0,0.8); color: #00ff00; font-size: 12px; padding: 1px 5px; border-radius: 4px; font-weight: bold; }
 
     /* ЕФЕКТИ */
-    .whirlwind {
-      position: absolute; width: 80px; height: 80px;
-      background-image: url('tornado-removebg-preview.png');
-      background-size: cover; background-position: center;
-      border-radius: 50%; animation: spin 0.4s linear infinite; z-index: 20;
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.6);
-    }
+    .whirlwind { position: absolute; width: 100px; height: 100px; background: url('tornado-removebg-preview.png'); background-size: cover; animation: spin 0.4s linear infinite; z-index: 20; mix-blend-mode: screen; pointer-events: none; }
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    .arrow-horde { position: absolute; width: 100px; height: 150px; background: rgba(255,60,60,0.3); border: 3px dashed red; z-index: 20; }
-    .attack-effect { position: absolute; pointer-events: none; z-index: 15; background-size: contain; background-repeat: no-repeat; width: 40px; height: 40px; }
-    .sword-anim { background-image: url('sword.png'); animation: swordStrike 0.4s ease-out forwards; }
-    @keyframes swordStrike {
-      0% { opacity: 0; transform: scale(1.0) rotate(0deg); }
-      50% { opacity: 1; transform: scale(3.5) rotate(45deg); }
-      100% { opacity: 0; transform: scale(3.0) rotate(45deg) translateY(-40px); }
-    }
-    .projectile-arrow { position: absolute; width: 60px; height: 60px; background-image: url('sparow.png'); background-size: contain; background-repeat: no-repeat; z-index: 100; pointer-events: none; }
+    .projectile-arrow { position: absolute; width: 50px; height: 50px; background: url('sparow.png') no-repeat; background-size: contain; z-index: 100; pointer-events: none; }
+    .attack-effect { position: absolute; pointer-events: none; z-index: 15; width: 40px; height: 40px; background: url('sword.png') no-repeat; background-size: contain; animation: strike 0.4s forwards; }
+    @keyframes strike { 0% { opacity:1; transform: scale(1); } 100% { opacity:0; transform: scale(3) rotate(45deg); } }
 
-    .enemy { position: absolute; font-size: 42px; z-index: 5; }
-    .enemy-hp { position: absolute; top: -18px; left: 50%; transform: translateX(-50%); background: #000000cc; color: #00ff00; font-size: 13px; padding: 1px 8px; border-radius: 8px; font-weight: bold; }
-
-    #win-screen { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.95); border: 4px solid #f1c40f; padding: 25px; border-radius: 20px; z-index: 500; display: none; width: 80%; }
-    #ability-hint { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,255,255,0.9); color: #000; padding: 10px 20px; border-radius: 10px; display: none; z-index: 101; font-weight: bold; }
+    #win-screen { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.95); border: 4px solid #f1c40f; padding: 20px; border-radius: 20px; z-index: 500; display: none; }
   </style>
 </head>
 <body>
-  <h1>🐹 Humster Tower Defens</h1>
+
   <div id="main-menu">
-    <p>Монети: <span id="gold">200</span> 🪙 | Рівень: 1</p>
-    <button onclick="enterBattle()" style="background:#e74c3c;color:white;padding:15px 30px;font-size:20px;border-radius:10px; cursor:pointer;">🛡️ В бій!</button>
+    <div class="menu-panel">
+      <h1>🐹 HAMSTER DEFENSE</h1>
+      <p>Рівень: <span id="lvl-txt">1</span> | Монети: <span id="gold-txt">200</span></p>
+      <button onclick="enterBattle()" style="padding:15px 30px; font-size:20px; cursor:pointer;">🛡️ В БІЙ!</button>
+    </div>
   </div>
 
   <div id="battle-screen" style="display:none;">
-    <p>Хвиля: <span id="group-info">1 / 3</span> | Вбито: <span id="total-killed">0</span> / 10</p>
+    <div style="padding:5px;">Рівень: <b id="cur-lvl">1</b> | Вбито: <b id="kills">0</b>/<span id="target">10</span> | 💰 <b id="gold-battle">200</b></div>
+
     <div id="battle-field">
-      <div id="ability-hint">ВИБЕРІТЬ МІСЦЕ!</div>
       <div id="win-screen">
-        <h2 style="color:#f1c40f;">🏆 РІВЕНЬ ПРОЙДЕНО!</h2>
-        <p>Замок відновлено!</p>
-        <button onclick="exitBattle()" style="padding:10px;">В меню</button>
-        <button onclick="resetBattleState(); enterBattle();" style="padding:10px; background:#27ae60; color:white;">Наступний рівень</button>
+        <h2 style="color:#f1c40f;">🏆 ПРОЙДЕНО!</h2>
+        <button onclick="nextLevel()">Наступний рівень</button>
       </div>
 
       <div class="road"></div>
+
       <div class="base-container">
-        <div class="tower-hp-container"><div id="tower-hp-fill"></div></div>
-        <img src="castle-removebg-preview.png" class="base-img" alt="Замок">
+        <div class="hp-bar-bg"><div id="hp-fill"></div></div>
+        <img src="castle-removebg-preview.png" class="base-img">
       </div>
 
       <div id="selection-menu">
@@ -108,224 +91,236 @@
         <div class="select-card" onclick="placeHamster('archer')"><img src="arrow.png"><br>Стрілок</div>
       </div>
 
-      <div class="slot slot1" id="slot-0" onclick="openSelection(0)"></div>
-      <div class="slot slot2" id="slot-1" onclick="openSelection(1)"></div>
-      <div class="charge-bar-container" id="cont-0" style="left:65px"><div class="charge-bar" id="charge0"></div></div>
-      <div class="charge-bar-container" id="cont-1" style="right:65px"><div class="charge-bar" id="charge1"></div></div>
+      <div class="slot slot1" id="slot-0" onclick="openSelect(0)"></div>
+      <div class="slot slot2" id="slot-1" onclick="openSelect(1)"></div>
+
+      <div class="charge-container" id="cont-0" style="left:55px"><div class="charge-fill" id="fill-0"></div></div>
+      <div class="charge-container" id="cont-1" style="right:55px"><div class="charge-fill" id="fill-1"></div></div>
 
       <div class="ability-buttons">
-        <div class="ability-btn" id="btn-warrior" onclick="prepareAbility('warrior', event)">⚡Торнадо</div>
-        <div class="ability-btn" id="btn-archer" onclick="prepareAbility('archer', event)">🏹Стріли</div>
+        <div class="ability-btn" id="btn-warrior" onclick="prepAbility('warrior', event)">⚡Торнадо</div>
+        <div class="ability-btn" id="btn-archer" onclick="prepAbility('archer', event)">🏹Стріли</div>
       </div>
     </div>
-    <button id="start-btn" onclick="startWave()" style="background:#27ae60;color:white;font-size:18px;padding:10px 30px;border-radius:10px;">▶️ Почати рівень</button>
+    <button id="start-btn" onclick="startWave()" style="padding:10px 30px; background:#27ae60; color:white; border-radius:10px; cursor:pointer;">▶️ Почати</button>
   </div>
 
   <script>
-    const HAMSTER_ASSETS = {
+    const ASSETS = {
       warrior: { stand: 'warior.png', anim1: 'anim_war-removebg-preview.png', anim2: 'anim_war2-removebg-preview.png' },
       archer: { stand: 'arrow.png', anim1: 'anim_arow1-removebg-preview.png', anim2: 'anim_arow2-removebg-preview.png' }
     };
+    const ENEMIES = {
+      cat: { e: '🐛', hp: 3, spd: 2, dmg: 10 },
+      bee: { e: '🪲', hp: 5, spd: 2.2, dmg: 15 },
+      spi: { e: '🕷️', hp: 8, spd: 1.8, dmg: 20 },
+      bat: { e: '🦇', hp: 12, spd: 3.5, dmg: 25 },
+      rat: { e: '🐀', hp: 15, spd: 2.5, dmg: 30 }
+    };
 
-    let gold = 200, towerHP = 100, placed = [null, null], enemies = [], isBattleActive = false;
-    let currentSlotIdx = null, currentGroupIndex = 0, killedInCurrentGroup = 0, totalKilled = 0;
-    let slotCharges = [0, 0], lastAttackTime = [0, 0], selectedAbilityType = null;
-    const groups = [2, 3, 5]; // Всього 10 ворогів
+    let lvl = 1, gold = 200, hp = 100, kills = 0, targetKills = 10;
+    let placed = [null, null], charges = [0, 0], enemies = [], isRunning = false;
+    let lastAtk = [0, 0], selectedAbility = null, currentSlot = null;
 
     function enterBattle() {
-      document.getElementById("main-menu").style.display = "none";
-      document.getElementById("battle-screen").style.display = "block";
-      resetBattleState();
+      document.getElementById('main-menu').style.display = 'none';
+      document.getElementById('battle-screen').style.display = 'block';
+      resetLevel();
     }
 
-    function resetBattleState() {
-      enemies.forEach(e => e.remove()); enemies = [];
-      totalKilled = 0; currentGroupIndex = 0; killedInCurrentGroup = 0;
-      isBattleActive = false; slotCharges = [0, 0]; placed = [null, null];
-      towerHP = 100; updateTowerVisuals();
-      document.getElementById("win-screen").style.display = "none";
-      document.querySelectorAll('.slot').forEach(s => { s.innerHTML = ""; s.classList.remove('hidden-border'); });
-      document.querySelectorAll('.charge-bar-container').forEach(c => c.style.display = "none");
-      document.getElementById("start-btn").disabled = false;
-      updateAbilityButtons(); updateLabels();
+    function resetLevel() {
+      enemies.forEach(e => e.el.remove()); enemies = [];
+      kills = 0; hp = 100; isRunning = false; charges = [0, 0];
+      targetKills = (lvl % 5 === 0) ? 21 : (lvl < 5 ? 10 : 20);
+      document.getElementById('start-btn').disabled = false;
+      document.getElementById('win-screen').style.display = 'none';
+      updateUI();
     }
 
-    function openSelection(idx) { if (!isBattleActive && !placed[idx]) { currentSlotIdx = idx; document.getElementById("selection-menu").style.display = "flex"; } }
+    function openSelect(idx) { if(!isRunning && !placed[idx]) { currentSlot = idx; document.getElementById('selection-menu').style.display = 'flex'; } }
 
     function placeHamster(type) {
-      placed[currentSlotIdx] = type;
-      updateHamsterImg(currentSlotIdx, 'stand');
-      document.getElementById("cont-" + currentSlotIdx).style.display = "block";
-      document.getElementById("selection-menu").style.display = "none";
-      updateAbilityButtons();
+      placed[currentSlot] = type;
+      setImg(currentSlot, 'stand');
+      document.getElementById('cont-'+currentSlot).style.display = 'block';
+      document.getElementById('selection-menu').style.display = 'none';
+      updateAbilities();
     }
 
-    function updateHamsterImg(slotIdx, state) {
-      const type = placed[slotIdx];
-      if (type) document.getElementById(`slot-${slotIdx}`).innerHTML = `<img src="${HAMSTER_ASSETS[type][state]}">`;
+    function setImg(slot, state) {
+      if(placed[slot]) document.getElementById('slot-'+slot).innerHTML = `<img src="${ASSETS[placed[slot]][state]}">`;
     }
 
-    function updateAbilityButtons() {
-      document.getElementById("btn-warrior").style.display = placed.includes("warrior") ? "flex" : "none";
-      document.getElementById("btn-archer").style.display = placed.includes("archer") ? "flex" : "none";
+    function updateAbilities() {
+      document.getElementById('btn-warrior').style.display = placed.includes('warrior') ? 'flex' : 'none';
+      document.getElementById('btn-archer').style.display = placed.includes('archer') ? 'flex' : 'none';
     }
 
     function startWave() {
-      if (placed.filter(p => p).length === 0) return alert("Поставте хом'яків!");
-      isBattleActive = true;
-      document.getElementById("start-btn").disabled = true;
+      if(!placed.some(p => p)) return alert("Постав хом'яків!");
+      isRunning = true;
+      document.getElementById('start-btn').disabled = true;
       document.querySelectorAll('.slot').forEach(s => s.classList.add('hidden-border'));
-      spawnGroup();
+      spawnLogic();
     }
 
-    function spawnGroup() {
-      if (currentGroupIndex >= groups.length) return;
-      killedInCurrentGroup = 0;
-      for (let i = 0; i < groups[currentGroupIndex]; i++) {
-        setTimeout(() => spawnEnemy(), i * 2000);
+    function spawnLogic() {
+      let count = 0, max = (lvl % 5 === 0) ? targetKills - 1 : targetKills;
+      let interval = setInterval(() => {
+        if(count < max) { spawnEnemy(); count++; }
+        else {
+          clearInterval(interval);
+          if(lvl % 5 === 0) setTimeout(spawnBoss, 3000);
+        }
+      }, 1500);
+    }
+
+    function spawnEnemy(isBoss = false) {
+      let pool = ['cat'];
+      if(lvl >= 2) pool.push('bee');
+      if(lvl >= 6) pool.push('spi');
+      if(lvl >= 16) pool.push('bat');
+      if(lvl >= 31) pool.push('rat');
+
+      let typeKey = pool[Math.floor(Math.random()*pool.length)];
+      let config = ENEMIES[typeKey];
+
+      let diff = Math.floor(lvl / 5);
+      let enemyHp = config.hp * Math.pow(1.5, diff);
+      let enemySpd = config.spd + (diff * 0.3);
+      let enemyDmg = config.dmg * Math.pow(2, diff);
+
+      if(isBoss) {
+        let bType = lvl >= 30 ? ['spi','bat','rat'][Math.floor(Math.random()*3)] : (lvl >= 15 ? 'bat' : 'spi');
+        config = ENEMIES[bType];
+        enemyHp = (bType === 'spi' ? 25 : (bType === 'bat' ? 40 : 50)) * Math.pow(2, Math.floor(lvl/10));
+        enemySpd = 0.7;
       }
+
+      const el = document.createElement('div');
+      el.className = 'enemy';
+      el.innerHTML = `<span class="enemy-hp">${Math.ceil(enemyHp)}</span><span>${config.e}</span>${isBoss?'<b style="color:red;font-size:10px">BOSS</b>':''}`;
+      el.style.left = (180 + Math.random()*30) + "px"; el.style.top = "-50px";
+      document.getElementById('battle-field').appendChild(el);
+
+      enemies.push({ el, hp: enemyHp, dmg: enemyDmg, spd: enemySpd, isBoss });
     }
 
-    function spawnEnemy() {
-      if (!isBattleActive) return;
-      const field = document.getElementById("battle-field");
-      const enemy = document.createElement("div");
-      enemy.className = "enemy"; enemy.innerHTML = `🐛<div class="enemy-hp">3</div>`;
-      enemy.dataset.hp = "3"; enemy.style.left = "190px"; enemy.style.top = "-50px";
-      field.appendChild(enemy); enemies.push(enemy);
+    function spawnBoss() { spawnEnemy(true); }
 
-      let move = setInterval(() => {
-        let top = parseInt(enemy.style.top);
-        if (top > 430 || !enemy.parentNode) {
-          clearInterval(move);
-          if (enemy.parentNode) {
-            enemy.remove(); enemies = enemies.filter(e => e !== enemy);
-            towerHP -= 10; updateTowerVisuals(); checkLevelStatus();
-          }
-        } else { enemy.style.top = (top + 2) + "px"; }
-      }, 50);
-    }
-
-    // АТАКИ ТА АНІМАЦІЇ (ПОВНА ЛОГІКА)
+    // ТІК ГРИ
     setInterval(() => {
-      if (!isBattleActive) return;
-      const now = Date.now();
-      placed.forEach((type, idx) => {
-        if (!type) return;
-        slotCharges[idx] = Math.min(100, slotCharges[idx] + 0.4);
-        document.getElementById("charge" + idx).style.width = slotCharges[idx] + "%";
+      if(!isRunning) return;
+      enemies.forEach(en => {
+        let top = parseFloat(en.el.style.top);
+        if(top > 450) {
+          if(en.isBoss) { alert("БОСС ПРОРВАВСЯ! КІНЕЦЬ ГРИ"); location.reload(); }
+          hp -= en.dmg; en.el.remove(); enemies = enemies.filter(x => x !== en);
+          checkEnd();
+        } else { en.el.style.top = (top + en.spd) + "px"; }
+      });
 
-        let targets = enemies.filter(e => {
-          let top = parseInt(e.style.top);
-          return type === 'warrior' ? (top > 350 && top < 450) : (top > 50 && top < 450);
+      placed.forEach((type, i) => {
+        if(!type) return;
+        charges[i] = Math.min(100, charges[i] + 0.3);
+        document.getElementById('fill-'+i).style.width = charges[i] + "%";
+        if(charges[i] >= 100) document.getElementById('btn-'+type).classList.add('ready');
+
+        let target = enemies.find(e => {
+          let t = parseFloat(e.el.style.top);
+          return type === 'warrior' ? (t > 300 && t < 450) : (t > 0 && t < 450);
         });
-        targets.sort((a, b) => parseInt(b.style.top) - parseInt(a.style.top));
-        let target = targets[0];
 
-        if (target && now - lastAttackTime[idx] > (type === 'warrior' ? 1000 : 1800)) {
-          lastAttackTime[idx] = now;
-          updateHamsterImg(idx, 'anim1');
+        if(target && Date.now() - lastAtk[i] > (type === 'warrior' ? 1000 : 1800)) {
+          lastAtk[i] = Date.now();
+          setImg(i, 'anim1');
           setTimeout(() => {
-            updateHamsterImg(idx, 'anim2');
-            if(type === 'warrior') { createAttackEffect(idx, 'sword-anim'); takeDamage(target, 1.5); }
-            else { fireSmartArrow(idx, target); }
+            setImg(i, 'anim2');
+            if(type === 'warrior') { showEff(i); dmg(target, 2); }
+            else { shoot(i, target); }
           }, 300);
-          setTimeout(() => updateHamsterImg(idx, 'stand'), 800);
+          setTimeout(() => setImg(i, 'stand'), 800);
         }
       });
-    }, 100);
+      updateUI();
+    }, 50);
 
-    function fireSmartArrow(slotIdx, enemy) {
-      const arrow = document.createElement("div");
-      arrow.className = "projectile-arrow";
-      const slot = document.getElementById(`slot-${slotIdx}`);
-      arrow.style.left = (slot.offsetLeft + 20) + "px"; arrow.style.top = slot.offsetTop + "px";
-      document.getElementById("battle-field").appendChild(arrow);
-      let fly = setInterval(() => {
-        if (!enemy.parentNode) { clearInterval(fly); arrow.remove(); return; }
-        let curX = parseInt(arrow.style.left), curY = parseInt(arrow.style.top);
-        let tx = parseInt(enemy.style.left) + 20, ty = parseInt(enemy.style.top) + 20;
-        let dx = tx - curX, dy = ty - curY, dist = Math.sqrt(dx*dx + dy*dy);
-        if (dist < 20) { clearInterval(fly); arrow.remove(); takeDamage(enemy, 1); }
-        else {
-          arrow.style.left = (curX + (dx/dist)*12) + "px"; arrow.style.top = (curY + (dy/dist)*12) + "px";
-          arrow.style.transform = `rotate(${Math.atan2(dy, dx)*57 + 90}deg)`;
-        }
-      }, 20);
+    function dmg(target, val) {
+      target.hp -= val;
+      if(target.hp <= 0) {
+        target.el.remove(); enemies = enemies.filter(x => x !== target);
+        kills++; checkEnd();
+      } else { target.el.querySelector('.enemy-hp').textContent = Math.ceil(target.hp); }
     }
 
-    function takeDamage(enemy, dmg) {
-      let hp = parseFloat(enemy.dataset.hp) - dmg;
-      enemy.dataset.hp = hp;
-      enemy.querySelector('.enemy-hp').textContent = Math.max(0, Math.ceil(hp));
-      if (hp <= 0 && enemy.parentNode) {
-        enemy.remove(); enemies = enemies.filter(e => e !== enemy);
-        totalKilled++; killedInCurrentGroup++; updateLabels(); checkLevelStatus();
+    function shoot(i, target) {
+      const a = document.createElement('div'); a.className = 'projectile-arrow';
+      const s = document.getElementById('slot-'+i);
+      a.style.left = s.offsetLeft + "px"; a.style.top = s.offsetTop + "px";
+      document.getElementById('battle-field').appendChild(a);
+      let move = setInterval(() => {
+        if(!target.el.parentNode) { a.remove(); clearInterval(move); return; }
+        let ax = parseFloat(a.style.left), ay = parseFloat(a.style.top);
+        let ex = parseFloat(target.el.style.left), ey = parseFloat(target.el.style.top);
+        let dx = ex-ax, dy = ey-ay, d = Math.sqrt(dx*dx+dy*dy);
+        if(d < 20) { dmg(target, 1.5); a.remove(); clearInterval(move); }
+        else { a.style.left = (ax + dx/d*10)+"px"; a.style.top = (ay + dy/d*10)+"px"; }
+      }, 30);
+    }
+
+    function showEff(i) {
+      const e = document.createElement('div'); e.className = 'attack-effect';
+      const s = document.getElementById('slot-'+i);
+      e.style.left = s.offsetLeft + "px"; e.style.top = (s.offsetTop-30) + "px";
+      document.getElementById('battle-field').appendChild(e);
+      setTimeout(() => e.remove(), 400);
+    }
+
+    function checkEnd() {
+      if(kills >= targetKills) {
+        isRunning = false;
+        document.getElementById('win-screen').style.display = 'block';
       }
+      if(hp <= 0) { alert("Замок впав!"); location.reload(); }
     }
 
-    function checkLevelStatus() {
-      if (killedInCurrentGroup >= groups[currentGroupIndex] && enemies.length === 0) {
-        currentGroupIndex++;
-        if (currentGroupIndex < groups.length) spawnGroup();
-        else { isBattleActive = false; towerHP = 100; updateTowerVisuals(); document.getElementById("win-screen").style.display = "block"; }
-      }
+    function nextLevel() {
+      lvl++; gold += 50; resetLevel();
     }
 
-    function updateTowerVisuals() {
-      document.getElementById("tower-hp-fill").style.width = towerHP + "%";
-      if (towerHP <= 0) { alert("Поразка!"); exitBattle(); }
+    function updateUI() {
+      document.getElementById('lvl-txt').textContent = lvl;
+      document.getElementById('gold-txt').textContent = gold;
+      document.getElementById('cur-lvl').textContent = lvl;
+      document.getElementById('kills').textContent = kills;
+      document.getElementById('target').textContent = targetKills;
+      document.getElementById('gold-battle').textContent = gold;
+      document.getElementById('hp-fill').style.width = hp + "%";
     }
 
-    function updateLabels() {
-      document.getElementById("group-info").textContent = Math.min(3, currentGroupIndex + 1) + " / 3";
-      document.getElementById("total-killed").textContent = totalKilled;
-    }
-
-    function exitBattle() { document.getElementById("battle-screen").style.display = "none"; document.getElementById("main-menu").style.display = "block"; }
-
-    // СПЕЦЗДІБНОСТІ
-    function prepareAbility(type, e) {
+    function prepAbility(type, e) {
       e.stopPropagation();
-      if (slotCharges[placed.indexOf(type)] < 100) return;
-      selectedAbilityType = type;
-      document.getElementById("ability-hint").style.display = "block";
+      let idx = placed.indexOf(type);
+      if(charges[idx] < 100) return;
+      selectedAbility = type;
       document.getElementById('btn-'+type).classList.add('targeting');
     }
 
-    document.getElementById("battle-field").addEventListener("click", (e) => {
-      if (!selectedAbilityType) return;
+    document.getElementById('battle-field').onclick = (e) => {
+      if(!selectedAbility) return;
       const rect = e.currentTarget.getBoundingClientRect();
       const x = e.clientX - rect.left, y = e.clientY - rect.top;
-      if (selectedAbilityType === "warrior") createWhirlwind(x, y);
-      else createArrowHorde(x, y);
-      slotCharges[placed.indexOf(selectedAbilityType)] = 0;
-      selectedAbilityType = null;
-      document.getElementById("ability-hint").style.display = "none";
-      document.querySelectorAll('.ability-btn').forEach(b => b.classList.remove('targeting'));
-    });
-
-    function createWhirlwind(x, y) {
-      const w = document.createElement("div"); w.className = "whirlwind";
-      w.style.left = (x-50)+"px"; w.style.top = (y-50)+"px";
-      document.getElementById("battle-field").appendChild(w);
-      setTimeout(() => { enemies.forEach(en => { if(Math.hypot(parseInt(en.style.left)-x, parseInt(en.style.top)-y) < 80) takeDamage(en, 5); }); w.remove(); }, 1200);
-    }
-
-    function createArrowHorde(x, y) {
-      const h = document.createElement("div"); h.className = "arrow-horde";
-      h.style.left = (x-50)+"px"; h.style.top = (y-75)+"px";
-      document.getElementById("battle-field").appendChild(h);
-      setTimeout(() => { enemies.forEach(en => { if(parseInt(en.style.top) > y-75 && parseInt(en.style.top) < y+75) takeDamage(en, 3); }); h.remove(); }, 1500);
-    }
-
-    function createAttackEffect(slotIdx, className) {
-      const slot = document.getElementById(`slot-${slotIdx}`);
-      const effect = document.createElement("div");
-      effect.className = `attack-effect ${className}`;
-      effect.style.left = slot.offsetLeft + "px"; effect.style.top = (slot.offsetTop - 30) + "px";
-      document.getElementById("battle-field").appendChild(effect);
-      setTimeout(() => effect.remove(), 400);
+      if(selectedAbility === 'warrior') {
+        const t = document.createElement('div'); t.className = 'whirlwind';
+        t.style.left = (x-50)+'px'; t.style.top = (y-50)+'px';
+        document.getElementById('battle-field').appendChild(t);
+        setTimeout(() => { enemies.forEach(en => { if(Math.hypot(parseFloat(en.el.style.left)-x, parseFloat(en.el.style.top)-y) < 80) dmg(en, 10); }); t.remove(); }, 1000);
+      } else {
+        enemies.forEach(en => { if(parseFloat(en.el.style.top) > y-100 && parseFloat(en.el.style.top) < y+100) dmg(en, 5); });
+      }
+      charges[placed.indexOf(selectedAbility)] = 0;
+      document.getElementById('btn-'+selectedAbility).classList.remove('ready', 'targeting');
+      selectedAbility = null;
     }
   </script>
 </body>

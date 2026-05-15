@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -65,23 +65,30 @@
       justify-content: center;
       flex-direction: column;
       gap: 10px;
-      overflow-x: auto;
+      overflow: hidden;
+    }
+
+    #battle-viewport {
+      position: relative;
+      width: var(--game-width, 960px);
+      height: var(--game-height, 540px);
+      flex: 0 0 auto;
     }
 
     #battle-field {
       position: relative;
       width: 960px;
-      aspect-ratio: 16 / 9;
-      max-width: calc(100vw - 24px);
-      min-width: 620px;
-      max-height: calc(100vh - 92px);
+      height: 540px;
+      transform: scale(var(--game-scale, 1));
+      transform-origin: top left;
       background:
         radial-gradient(circle at 52% 50%, rgba(255, 246, 178, 0.2) 0 5%, transparent 6%),
         linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px),
         linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
         linear-gradient(135deg, #315f4c, #7b6243 48%, #3a6a50);
       background-size: auto, 80px 80px, 80px 80px, auto;
-      border: 6px solid #27313b;
+      border: 0;
+      outline: 6px solid #27313b;
       border-radius: 8px;
       overflow: hidden;
       cursor: crosshair;
@@ -321,7 +328,6 @@
       .base-container { width: 145px; }
       .enemy { font-size: 26px; }
       #start-btn { font-size: 16px; padding: 10px 22px; }
-      #battle-field { max-width: none; }
     }
   </style>
 </head>
@@ -335,7 +341,8 @@
   </div>
 
   <div id="battle-screen">
-    <div id="battle-field">
+    <div id="battle-viewport">
+      <div id="battle-field">
       <div class="sand-patch patch-a"></div>
       <div class="sand-patch patch-b"></div>
       <div class="sand-patch patch-c"></div>
@@ -365,6 +372,7 @@
       </div>
     </div>
 
+    </div>
     <button id="start-btn" onclick="startWave()">▶️ Начать волну</button>
   </div>
 
@@ -385,9 +393,11 @@
       [{x:995,y:96}, {x:800,y:96}, {x:800,y:340}, {x:635,y:340}, {x:635,y:270}, {x:480,y:270}]
     ];
 
+    const GAME = { width: 960, height: 540 };
     const GRID = { cols: 16, rows: 9, cellW: 60, cellH: 60 };
-    const ROAD_RADIUS = 48;
+    const ROAD_RADIUS = 54;
     const CASTLE_RADIUS = 95;
+    const EXTRA_BLOCKED_CELLS = new Set(['9,5', '10,5']);
     let SLOT_COUNT = 0;
     let wave = 1;
     let hp = 100;
@@ -404,8 +414,23 @@
     function enterBattle() {
       document.getElementById('main-menu').style.display = 'none';
       document.getElementById('battle-screen').style.display = 'flex';
+      updateGameScale();
       buildGrid();
       resetBattle();
+    }
+
+    function updateGameScale() {
+      const screen = document.getElementById('battle-screen');
+      const button = document.getElementById('start-btn');
+      const verticalPadding = 34;
+      const buttonHeight = button ? button.offsetHeight + 10 : 62;
+      const availableWidth = window.innerWidth - 24;
+      const availableHeight = window.innerHeight - verticalPadding - buttonHeight;
+      const scale = Math.min(1, availableWidth / GAME.width, availableHeight / GAME.height);
+
+      screen.style.setProperty('--game-scale', scale);
+      screen.style.setProperty('--game-width', GAME.width * scale + 'px');
+      screen.style.setProperty('--game-height', GAME.height * scale + 'px');
     }
 
     function buildGrid() {
@@ -427,7 +452,7 @@
           slot.style.left = col * GRID.cellW + 'px';
           slot.style.top = row * GRID.cellH + 'px';
 
-          if (isBlockedCell(center)) {
+          if (isBlockedCell(center, col, row)) {
             slot.classList.add('road-cell');
           } else {
             slot.onclick = () => openSelect(slotIndex);
@@ -442,7 +467,8 @@
       SLOT_COUNT = placed.length;
     }
 
-    function isBlockedCell(center) {
+    function isBlockedCell(center, col, row) {
+      if (EXTRA_BLOCKED_CELLS.has(`${col},${row}`)) return true;
       if (Math.hypot(center.x - 480, center.y - 270) < CASTLE_RADIUS) return true;
       return PATHS.some(path => pointNearPath(center, path, ROAD_RADIUS));
     }
@@ -740,6 +766,7 @@
       }
     });
 
+    window.addEventListener('resize', updateGameScale);
     requestAnimationFrame(gameLoop);
   </script>
 </body>

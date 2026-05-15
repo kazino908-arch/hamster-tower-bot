@@ -68,6 +68,20 @@
       overflow: hidden;
     }
 
+    #battle-screen.portrait-landscape {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100vh;
+      height: 100vw;
+      min-height: 0;
+      padding: 8px;
+      transform: rotate(90deg) translateY(-100%);
+      transform-origin: top left;
+      background: #0b1e3d;
+      z-index: 900;
+    }
+
     #battle-viewport {
       position: relative;
       width: var(--game-width, 960px);
@@ -414,20 +428,33 @@
     function enterBattle() {
       document.getElementById('main-menu').style.display = 'none';
       document.getElementById('battle-screen').style.display = 'flex';
+      document.body.classList.add('battle-active');
+      requestGameFullscreen();
       updateGameScale();
       buildGrid();
       resetBattle();
     }
 
+    function requestGameFullscreen() {
+      const root = document.documentElement;
+      if (root.requestFullscreen && !document.fullscreenElement) {
+        root.requestFullscreen().catch(() => {});
+      }
+    }
+
     function updateGameScale() {
       const screen = document.getElementById('battle-screen');
       const button = document.getElementById('start-btn');
-      const verticalPadding = 34;
+      const forceLandscape = window.innerHeight > window.innerWidth && window.innerWidth <= 820;
+      const viewportWidth = forceLandscape ? window.innerHeight : window.innerWidth;
+      const viewportHeight = forceLandscape ? window.innerWidth : window.innerHeight;
+      const verticalPadding = forceLandscape ? 22 : 34;
       const buttonHeight = button ? button.offsetHeight + 10 : 62;
-      const availableWidth = window.innerWidth - 24;
-      const availableHeight = window.innerHeight - verticalPadding - buttonHeight;
+      const availableWidth = viewportWidth - 24;
+      const availableHeight = viewportHeight - verticalPadding - buttonHeight;
       const scale = Math.min(1, availableWidth / GAME.width, availableHeight / GAME.height);
 
+      screen.classList.toggle('portrait-landscape', forceLandscape);
       screen.style.setProperty('--game-scale', scale);
       screen.style.setProperty('--game-width', GAME.width * scale + 'px');
       screen.style.setProperty('--game-height', GAME.height * scale + 'px');

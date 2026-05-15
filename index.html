@@ -27,15 +27,6 @@
       z-index: 1000;
     }
 
-    #main-menu.portrait-landscape {
-      left: 0;
-      top: 0;
-      width: 100vh;
-      height: 100vw;
-      transform: rotate(90deg) translateY(-100%);
-      transform-origin: top left;
-    }
-
     .menu-panel {
       width: min(420px, calc(100vw - 28px));
       background: rgba(0, 0, 0, 0.78);
@@ -76,20 +67,6 @@
       flex-direction: column;
       gap: 10px;
       overflow: hidden;
-    }
-
-    #battle-screen.portrait-landscape {
-      position: fixed;
-      left: 0;
-      top: 0;
-      width: 100vh;
-      height: 100vw;
-      min-height: 0;
-      padding: 8px;
-      transform: rotate(90deg) translateY(-100%);
-      transform-origin: top left;
-      background: #0b1e3d;
-      z-index: 900;
     }
 
     #battle-viewport {
@@ -522,8 +499,7 @@
     }
 
     function updateMenuOrientation() {
-      const isMenuVisible = document.getElementById('main-menu').style.display !== 'none';
-      document.getElementById('main-menu').classList.toggle('portrait-landscape', isMenuVisible && shouldUsePortraitLandscape());
+      document.getElementById('main-menu').classList.remove('portrait-landscape');
     }
 
     function enterBattle() {
@@ -541,23 +517,32 @@
     function requestGameFullscreen() {
       const root = document.documentElement;
       if (root.requestFullscreen && !document.fullscreenElement) {
-        root.requestFullscreen().catch(() => {});
+        root.requestFullscreen()
+          .then(() => lockLandscape())
+          .catch(() => lockLandscape());
+      } else {
+        lockLandscape();
+      }
+    }
+
+    function lockLandscape() {
+      if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('landscape').catch(() => {});
       }
     }
 
     function updateGameScale() {
       const screen = document.getElementById('battle-screen');
       const hud = document.getElementById('battle-hud');
-      const forceLandscape = shouldUsePortraitLandscape();
-      const viewportWidth = forceLandscape ? window.innerHeight : window.innerWidth;
-      const viewportHeight = forceLandscape ? window.innerWidth : window.innerHeight;
-      const verticalPadding = forceLandscape ? 22 : 34;
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const verticalPadding = shouldUsePortraitLandscape() ? 16 : 34;
       const hudHeight = hud ? hud.offsetHeight + 12 : 106;
       const availableWidth = viewportWidth - 24;
       const availableHeight = viewportHeight - verticalPadding - hudHeight;
       const scale = Math.min(1, availableWidth / GAME.width, availableHeight / GAME.height);
 
-      screen.classList.toggle('portrait-landscape', forceLandscape);
+      screen.classList.remove('portrait-landscape');
       screen.style.setProperty('--game-scale', scale);
       screen.style.setProperty('--game-width', GAME.width * scale + 'px');
       screen.style.setProperty('--game-height', GAME.height * scale + 'px');

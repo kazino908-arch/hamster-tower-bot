@@ -27,6 +27,15 @@
       z-index: 1000;
     }
 
+    #main-menu.portrait-landscape {
+      left: 0;
+      top: 0;
+      width: 100vh;
+      height: 100vw;
+      transform: rotate(90deg) translateY(-100%);
+      transform-origin: top left;
+    }
+
     .menu-panel {
       width: min(420px, calc(100vw - 28px));
       background: rgba(0, 0, 0, 0.78);
@@ -45,6 +54,7 @@
 
     .menu-panel button,
     #start-btn,
+    #exit-menu-btn,
     #win-screen button {
       padding: 14px 28px;
       font-size: 20px;
@@ -324,6 +334,63 @@
       cursor: default;
     }
 
+    #battle-hud {
+      width: var(--game-width, 960px);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .deck {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(54px, 1fr));
+      gap: 10px;
+      padding: 10px;
+      background: rgba(5, 14, 28, 0.78);
+      border: 3px solid #27313b;
+      border-radius: 10px;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.34);
+    }
+
+    .deck-card {
+      min-width: 54px;
+      aspect-ratio: 3 / 4;
+      border: 2px solid rgba(255,255,255,0.36);
+      border-radius: 8px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.16), rgba(255,255,255,0.04));
+    }
+
+    .hud-side {
+      min-width: 170px;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 8px;
+    }
+
+    .coin-counter {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: rgba(5, 14, 28, 0.84);
+      border: 3px solid #f1c40f;
+      border-radius: 10px;
+      color: #ffe28a;
+      font-size: 20px;
+      font-weight: 800;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.34);
+    }
+
+    #exit-menu-btn {
+      padding: 10px 14px;
+      background: #f6f7fb;
+      color: #10213c;
+      font-size: 16px;
+    }
+
     #win-screen {
       position: absolute;
       left: 50%;
@@ -342,6 +409,14 @@
       .base-container { width: 145px; }
       .enemy { font-size: 26px; }
       #start-btn { font-size: 16px; padding: 10px 22px; }
+      #battle-hud {
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+      }
+      .deck { gap: 6px; padding: 7px; }
+      .hud-side { min-width: 132px; }
+      .coin-counter { font-size: 16px; min-height: 36px; }
+      #exit-menu-btn { font-size: 14px; padding: 8px 10px; }
     }
   </style>
 </head>
@@ -387,7 +462,21 @@
     </div>
 
     </div>
-    <button id="start-btn" onclick="startWave()">▶️ Начать волну</button>
+
+    <div id="battle-hud">
+      <div class="deck" aria-label="Колода">
+        <div class="deck-card"></div>
+        <div class="deck-card"></div>
+        <div class="deck-card"></div>
+        <div class="deck-card"></div>
+        <div class="deck-card"></div>
+      </div>
+      <div class="hud-side">
+        <div class="coin-counter">🪙 <span id="coin-count">200</span></div>
+        <button id="exit-menu-btn" onclick="exitToMenu()">В меню</button>
+        <button id="start-btn" onclick="startWave()">▶️ Начать волну</button>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -414,9 +503,12 @@
     const EXTRA_BLOCKED_CELLS = new Set(['9,5', '10,5']);
     let SLOT_COUNT = 0;
     let wave = 1;
+    let gold = 200;
     let hp = 100;
     let killed = 0;
+    let finishedEnemies = 0;
     let targetKills = 16;
+    let roundRewardPaid = false;
     let enemies = [];
     let placed = [];
     let lastAtk = [];
@@ -425,14 +517,25 @@
     let spawnTimer = null;
     let lastFrame = performance.now();
 
+    function shouldUsePortraitLandscape() {
+      return window.innerHeight > window.innerWidth && window.innerWidth <= 820;
+    }
+
+    function updateMenuOrientation() {
+      const isMenuVisible = document.getElementById('main-menu').style.display !== 'none';
+      document.getElementById('main-menu').classList.toggle('portrait-landscape', isMenuVisible && shouldUsePortraitLandscape());
+    }
+
     function enterBattle() {
       document.getElementById('main-menu').style.display = 'none';
+      document.getElementById('main-menu').classList.remove('portrait-landscape');
       document.getElementById('battle-screen').style.display = 'flex';
       document.body.classList.add('battle-active');
       requestGameFullscreen();
       updateGameScale();
       buildGrid();
       resetBattle();
+      updateGold();
     }
 
     function requestGameFullscreen() {
@@ -444,14 +547,14 @@
 
     function updateGameScale() {
       const screen = document.getElementById('battle-screen');
-      const button = document.getElementById('start-btn');
-      const forceLandscape = window.innerHeight > window.innerWidth && window.innerWidth <= 820;
+      const hud = document.getElementById('battle-hud');
+      const forceLandscape = shouldUsePortraitLandscape();
       const viewportWidth = forceLandscape ? window.innerHeight : window.innerWidth;
       const viewportHeight = forceLandscape ? window.innerWidth : window.innerHeight;
       const verticalPadding = forceLandscape ? 22 : 34;
-      const buttonHeight = button ? button.offsetHeight + 10 : 62;
+      const hudHeight = hud ? hud.offsetHeight + 12 : 106;
       const availableWidth = viewportWidth - 24;
-      const availableHeight = viewportHeight - verticalPadding - buttonHeight;
+      const availableHeight = viewportHeight - verticalPadding - hudHeight;
       const scale = Math.min(1, availableWidth / GAME.width, availableHeight / GAME.height);
 
       screen.classList.toggle('portrait-landscape', forceLandscape);
@@ -521,6 +624,8 @@
       enemies.forEach(enemy => enemy.el.remove());
       enemies = [];
       killed = 0;
+      finishedEnemies = 0;
+      roundRewardPaid = false;
       hp = 100;
       running = false;
       targetKills = 14 + wave * 2;
@@ -566,6 +671,8 @@
 
       running = true;
       killed = 0;
+      finishedEnemies = 0;
+      roundRewardPaid = false;
       document.getElementById('start-btn').disabled = true;
       let spawned = 0;
       spawnTimer = setInterval(() => {
@@ -610,10 +717,7 @@
       if (running) {
         moveEnemies(dt);
         attackEnemies(now);
-        if (killed >= targetKills && enemies.length === 0 && !spawnTimer) {
-          running = false;
-          document.getElementById('win-screen').style.display = 'block';
-        }
+        if (finishedEnemies >= targetKills && enemies.length === 0 && !spawnTimer) endWave();
       }
 
       requestAnimationFrame(gameLoop);
@@ -726,6 +830,9 @@
         enemy.el.remove();
         enemies = enemies.filter(item => item !== enemy);
         killed++;
+        finishedEnemies++;
+        gold += 5;
+        updateGold();
       } else {
         enemy.el.querySelector('.enemy-hp').textContent = Math.ceil(enemy.hp);
       }
@@ -737,10 +844,20 @@
       enemy.dead = true;
       enemy.el.remove();
       enemies = enemies.filter(item => item !== enemy);
+      finishedEnemies++;
       if (hp <= 0) {
         alert('Замок пал!');
         location.reload();
       }
+    }
+
+    function endWave() {
+      if (roundRewardPaid) return;
+      running = false;
+      roundRewardPaid = true;
+      gold += hp >= 100 ? 200 : 100;
+      updateGold();
+      document.getElementById('win-screen').style.display = 'block';
     }
 
     function nextWave() {
@@ -748,8 +865,31 @@
       resetBattle();
     }
 
+    function exitToMenu() {
+      if (spawnTimer) {
+        clearInterval(spawnTimer);
+        spawnTimer = null;
+      }
+      enemies.forEach(enemy => enemy.el.remove());
+      enemies = [];
+      running = false;
+      currentSlot = null;
+      document.getElementById('selection-menu').style.display = 'none';
+      document.getElementById('win-screen').style.display = 'none';
+      document.getElementById('battle-screen').style.display = 'none';
+      document.getElementById('battle-screen').classList.remove('portrait-landscape');
+      document.getElementById('main-menu').style.display = 'flex';
+      document.body.classList.remove('battle-active');
+      updateMenuOrientation();
+      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    }
+
     function updateHp() {
       document.getElementById('hp-fill').style.width = Math.max(0, hp) + '%';
+    }
+
+    function updateGold() {
+      document.getElementById('coin-count').textContent = gold;
     }
 
     function positionEnemy(enemy) {
@@ -793,7 +933,11 @@
       }
     });
 
-    window.addEventListener('resize', updateGameScale);
+    window.addEventListener('resize', () => {
+      updateMenuOrientation();
+      updateGameScale();
+    });
+    updateMenuOrientation();
     requestAnimationFrame(gameLoop);
   </script>
 </body>

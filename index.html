@@ -69,6 +69,20 @@
       overflow: hidden;
     }
 
+    #battle-screen.virtual-landscape {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 100vh;
+      height: 100vw;
+      min-height: 0;
+      padding: 8px;
+      transform: rotate(90deg) translateY(-100%);
+      transform-origin: top left;
+      background: #0b1e3d;
+      z-index: 900;
+    }
+
     #battle-viewport {
       position: relative;
       width: var(--game-width, 960px);
@@ -416,6 +430,40 @@
       }
       #exit-menu-btn { font-size: 13px; padding: 8px 8px; }
     }
+
+    #battle-screen.virtual-landscape #battle-hud {
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+    }
+
+    #battle-screen.virtual-landscape .deck {
+      grid-template-columns: repeat(5, minmax(42px, 1fr));
+      gap: 7px;
+      padding: 7px;
+    }
+
+    #battle-screen.virtual-landscape .deck-card {
+      aspect-ratio: 3 / 4;
+    }
+
+    #battle-screen.virtual-landscape .hud-side {
+      min-width: 132px;
+      grid-template-columns: none;
+      grid-template-rows: auto auto 1fr;
+      gap: 7px;
+    }
+
+    #battle-screen.virtual-landscape .coin-counter {
+      min-height: 34px;
+      font-size: 15px;
+      padding: 6px 8px;
+    }
+
+    #battle-screen.virtual-landscape #start-btn,
+    #battle-screen.virtual-landscape #exit-menu-btn {
+      font-size: 13px;
+      padding: 8px 8px;
+    }
   </style>
 </head>
 <body>
@@ -566,15 +614,16 @@
     function updateGameScale() {
       const screen = document.getElementById('battle-screen');
       const hud = document.getElementById('battle-hud');
-      const isPortraitPhone = shouldUsePortraitLandscape();
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-      const verticalPadding = isPortraitPhone ? 12 : 34;
+      const useVirtualLandscape = shouldUsePortraitLandscape();
+      const viewportWidth = useVirtualLandscape ? window.innerHeight : window.innerWidth;
+      const viewportHeight = useVirtualLandscape ? window.innerWidth : window.innerHeight;
+      const verticalPadding = useVirtualLandscape ? 16 : 34;
       const hudHeight = hud ? hud.offsetHeight + 12 : 106;
-      const availableWidth = viewportWidth - (isPortraitPhone ? 12 : 24);
+      const availableWidth = viewportWidth - (useVirtualLandscape ? 16 : 24);
       const availableHeight = viewportHeight - verticalPadding - hudHeight;
       const scale = Math.min(1, availableWidth / GAME.width, availableHeight / GAME.height);
 
+      screen.classList.toggle('virtual-landscape', useVirtualLandscape);
       screen.classList.remove('portrait-landscape');
       screen.style.setProperty('--game-scale', scale);
       screen.style.setProperty('--game-width', GAME.width * scale + 'px');
@@ -896,6 +945,7 @@
       document.getElementById('win-screen').style.display = 'none';
       document.getElementById('battle-screen').style.display = 'none';
       document.getElementById('battle-screen').classList.remove('portrait-landscape');
+      document.getElementById('battle-screen').classList.remove('virtual-landscape');
       document.getElementById('main-menu').style.display = 'flex';
       document.body.classList.remove('battle-active');
       updateMenuOrientation();

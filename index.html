@@ -316,7 +316,7 @@
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 14px;
-      align-items: stretch;
+      align-items: start;
     }
 
     .deck {
@@ -328,6 +328,7 @@
       border: 3px solid #27313b;
       border-radius: 10px;
       box-shadow: 0 8px 18px rgba(0,0,0,0.34);
+      align-self: start;
     }
 
     .deck-card {
@@ -382,18 +383,38 @@
     }
 
     @media (max-width: 700px) {
-      #battle-screen { padding: 8px; }
+      #battle-screen {
+        padding: 6px;
+        justify-content: flex-start;
+        gap: 7px;
+      }
       .base-container { width: 145px; }
       .enemy { font-size: 26px; }
-      #start-btn { font-size: 16px; padding: 10px 22px; }
+      #start-btn { font-size: 14px; padding: 8px 10px; }
       #battle-hud {
-        grid-template-columns: 1fr auto;
+        grid-template-columns: 1fr;
         gap: 8px;
       }
-      .deck { gap: 6px; padding: 7px; }
-      .hud-side { min-width: 132px; }
-      .coin-counter { font-size: 16px; min-height: 36px; }
-      #exit-menu-btn { font-size: 14px; padding: 8px 10px; }
+      .deck {
+        gap: 7px;
+        padding: 8px;
+      }
+      .deck-card {
+        min-width: 0;
+        aspect-ratio: 5 / 4;
+      }
+      .hud-side {
+        min-width: 0;
+        grid-template-columns: 1fr 1fr 1.25fr;
+        grid-template-rows: none;
+        gap: 7px;
+      }
+      .coin-counter {
+        font-size: 15px;
+        min-height: 34px;
+        padding: 6px 8px;
+      }
+      #exit-menu-btn { font-size: 13px; padding: 8px 8px; }
     }
   </style>
 </head>
@@ -534,11 +555,12 @@
     function updateGameScale() {
       const screen = document.getElementById('battle-screen');
       const hud = document.getElementById('battle-hud');
+      const isPortraitPhone = shouldUsePortraitLandscape();
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
-      const verticalPadding = shouldUsePortraitLandscape() ? 16 : 34;
+      const verticalPadding = isPortraitPhone ? 12 : 34;
       const hudHeight = hud ? hud.offsetHeight + 12 : 106;
-      const availableWidth = viewportWidth - 24;
+      const availableWidth = viewportWidth - (isPortraitPhone ? 12 : 24);
       const availableHeight = viewportHeight - verticalPadding - hudHeight;
       const scale = Math.min(1, availableWidth / GAME.width, availableHeight / GAME.height);
 

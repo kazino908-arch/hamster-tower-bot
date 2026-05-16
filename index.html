@@ -523,32 +523,43 @@
       document.getElementById('main-menu').classList.remove('portrait-landscape');
     }
 
-    function enterBattle() {
+    async function enterBattle() {
+      await requestGameFullscreen();
       document.getElementById('main-menu').style.display = 'none';
       document.getElementById('main-menu').classList.remove('portrait-landscape');
       document.getElementById('battle-screen').style.display = 'flex';
       document.body.classList.add('battle-active');
-      requestGameFullscreen();
       updateGameScale();
       buildGrid();
       resetBattle();
       updateGold();
+      setTimeout(updateGameScale, 350);
     }
 
-    function requestGameFullscreen() {
+    async function requestGameFullscreen() {
       const root = document.documentElement;
-      if (root.requestFullscreen && !document.fullscreenElement) {
-        root.requestFullscreen()
-          .then(() => lockLandscape())
-          .catch(() => lockLandscape());
-      } else {
-        lockLandscape();
+      try {
+        if (root.requestFullscreen && !document.fullscreenElement) {
+          await root.requestFullscreen({ navigationUI: 'hide' });
+        }
+      } catch (error) {
+        try {
+          if (root.requestFullscreen && !document.fullscreenElement) {
+            await root.requestFullscreen();
+          }
+        } catch (fallbackError) {}
       }
+      await lockLandscape();
     }
 
-    function lockLandscape() {
-      if (screen.orientation && screen.orientation.lock) {
-        screen.orientation.lock('landscape').catch(() => {});
+    async function lockLandscape() {
+      if (!screen.orientation || !screen.orientation.lock) return;
+      try {
+        await screen.orientation.lock('landscape-primary');
+      } catch (error) {
+        try {
+          await screen.orientation.lock('landscape');
+        } catch (fallbackError) {}
       }
     }
 
@@ -943,6 +954,12 @@
     window.addEventListener('resize', () => {
       updateMenuOrientation();
       updateGameScale();
+    });
+    window.addEventListener('orientationchange', () => {
+      setTimeout(() => {
+        updateMenuOrientation();
+        updateGameScale();
+      }, 350);
     });
     updateMenuOrientation();
     requestAnimationFrame(gameLoop);

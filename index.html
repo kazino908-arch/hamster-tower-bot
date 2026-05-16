@@ -44,6 +44,8 @@
     }
 
     .menu-panel button,
+    .menu-actions button,
+    .modal button,
     #start-btn,
     #exit-menu-btn,
     #win-screen button {
@@ -56,6 +58,106 @@
       cursor: pointer;
       font-weight: 700;
       box-shadow: 0 4px 0 rgba(0, 0, 0, 0.25);
+    }
+
+    .menu-actions {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .menu-actions button {
+      width: 100%;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(0,0,0,0.65);
+      z-index: 1300;
+    }
+
+    .modal-panel {
+      width: min(520px, calc(100vw - 28px));
+      background: rgba(8, 12, 18, 0.96);
+      border: 3px solid #f1c40f;
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 18px 48px rgba(0,0,0,0.55);
+    }
+
+    .modal-panel h2 {
+      margin: 0 0 12px;
+      font-size: 26px;
+    }
+
+    .inventory-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(120px, 1fr));
+      gap: 12px;
+      margin: 12px 0 16px;
+    }
+
+    .inventory-card {
+      border: 2px solid rgba(255,255,255,0.24);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.08);
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .inventory-card:hover {
+      border-color: #f1c40f;
+      background: rgba(255,255,255,0.14);
+    }
+
+    .inventory-card img {
+      width: 96px;
+      height: 96px;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto 6px;
+    }
+
+    .confirm-row {
+      display: none;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+      margin: 14px 0 16px;
+    }
+
+    .level-dot {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      border: 3px solid #f1c40f;
+      background: radial-gradient(circle at 35% 30%, #fff7c8, #27ae60 48%, #145f38);
+      color: white;
+      font-size: 18px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.35);
+    }
+
+    .level-dot.snow { background: radial-gradient(circle at 35% 30%, #ffffff, #72b8e8 48%, #315f91); }
+    .level-dot.desert { background: radial-gradient(circle at 35% 30%, #fff3b0, #d6a13a 48%, #8f5a22); }
+    .level-dot.locked {
+      border-color: rgba(255,255,255,0.26);
+      background: radial-gradient(circle at 35% 30%, #5b6570, #26313f 56%, #121923);
+      color: rgba(255,255,255,0.72);
+      cursor: default;
+      filter: grayscale(0.65);
     }
 
     #battle-screen {
@@ -108,6 +210,47 @@
       overflow: hidden;
       cursor: crosshair;
       box-shadow: 0 18px 46px rgba(0, 0, 0, 0.5);
+    }
+
+    #battle-field.summer {
+      background:
+        radial-gradient(circle at 52% 50%, rgba(255, 246, 178, 0.2) 0 5%, transparent 6%),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(135deg, #315f4c, #7b6243 48%, #3a6a50);
+      background-size: auto, 80px 80px, 80px 80px, auto;
+    }
+
+    #battle-field.snow {
+      background:
+        radial-gradient(circle at 52% 50%, rgba(255,255,255,0.38) 0 6%, transparent 7%),
+        linear-gradient(90deg, rgba(52,90,124,0.12) 1px, transparent 1px),
+        linear-gradient(rgba(52,90,124,0.12) 1px, transparent 1px),
+        linear-gradient(135deg, #cfe7ef, #8eb4cb 46%, #e8f5f8);
+      background-size: auto, 80px 80px, 80px 80px, auto;
+    }
+
+    #battle-field.desert {
+      background:
+        radial-gradient(circle at 52% 50%, rgba(255,238,138,0.32) 0 6%, transparent 7%),
+        linear-gradient(90deg, rgba(113,78,32,0.12) 1px, transparent 1px),
+        linear-gradient(rgba(113,78,32,0.12) 1px, transparent 1px),
+        linear-gradient(135deg, #d8b05f, #b47a38 46%, #e3c77a);
+      background-size: auto, 80px 80px, 80px 80px, auto;
+    }
+
+    #decor-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .map-decor {
+      position: absolute;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 5px rgba(0,0,0,0.28));
+      opacity: 0.95;
     }
 
     .sand-patch {
@@ -183,6 +326,53 @@
       transition: width 0.25s;
     }
 
+    #wave-label {
+      position: absolute;
+      left: 50%;
+      top: 10px;
+      transform: translateX(-50%);
+      z-index: 40;
+      padding: 6px 16px;
+      background: rgba(5, 14, 28, 0.84);
+      border: 2px solid rgba(255,255,255,0.35);
+      border-radius: 999px;
+      color: white;
+      font-weight: 800;
+      font-size: 18px;
+      pointer-events: none;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+    }
+
+    .battle-top-buttons {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      z-index: 45;
+      display: flex;
+      gap: 8px;
+    }
+
+    .battle-top-buttons button {
+      min-width: 58px;
+      padding: 7px 10px;
+      border: 2px solid rgba(255,255,255,0.35);
+      border-radius: 8px;
+      background: rgba(5, 14, 28, 0.88);
+      color: white;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+    }
+
+    .battle-top-buttons button.active {
+      background: #f1c40f;
+      color: #10213c;
+    }
+
+    .battle-top-buttons button:disabled {
+      display: none;
+    }
+
     .slot {
       position: absolute;
       width: 60px;
@@ -219,34 +409,48 @@
       cursor: default;
     }
 
-    #selection-menu {
+    .upgrade-panel {
       position: absolute;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      display: none;
-      gap: 10px;
-      padding: 10px;
-      background: rgba(8, 12, 18, 0.9);
-      border: 2px solid white;
+      width: 190px;
+      padding: 12px;
+      background: rgba(5, 14, 28, 0.94);
+      border: 3px solid #f1c40f;
       border-radius: 10px;
-      z-index: 200;
-    }
-    .select-card {
-      width: 72px;
-      min-height: 72px;
-      padding: 5px;
-      background: #41434a;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 11px;
+      z-index: 220;
       color: white;
+      text-align: left;
+      display: none;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.5);
     }
-    .select-card img {
+
+    .upgrade-panel h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      text-align: center;
+    }
+
+    .upgrade-panel ul {
+      margin: 0 0 10px;
+      padding-left: 18px;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .upgrade-panel button {
       width: 100%;
-      height: 48px;
-      object-fit: contain;
-      display: block;
+      padding: 8px;
+      border: 0;
+      border-radius: 7px;
+      background: #28c76f;
+      color: white;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .upgrade-panel .close-upgrade {
+      margin-top: 7px;
+      background: #f6f7fb;
+      color: #10213c;
     }
 
     .enemy {
@@ -274,11 +478,25 @@
       font-weight: 700;
     }
 
+    .enemy.boss {
+      width: 72px;
+      height: 80px;
+      font-size: 46px;
+      z-index: 9;
+    }
+
+    .enemy.boss .enemy-hp {
+      color: #ffdc56;
+      border: 2px solid #d83333;
+      min-width: 42px;
+    }
+
     .projectile-arrow {
       position: absolute;
       width: 34px;
       height: 34px;
-      transform: translate(-50%, -50%);
+      transform: translate(-50%, -50%) rotate(var(--arrow-angle, 0rad));
+      transform-origin: center;
       background: url('sparow.png') no-repeat center / contain;
       z-index: 30;
       pointer-events: none;
@@ -350,7 +568,106 @@
       aspect-ratio: 3 / 4;
       border: 2px solid rgba(255,255,255,0.36);
       border-radius: 8px;
-      background: linear-gradient(145deg, rgba(255,255,255,0.16), rgba(255,255,255,0.04));
+      background: transparent;
+      color: white;
+      cursor: default;
+      user-select: none;
+      touch-action: none;
+      font-size: 11px;
+      font-weight: 700;
+      perspective: 800px;
+      position: relative;
+    }
+
+    .deck-card.available {
+      cursor: grab;
+      border-color: rgba(255,255,255,0.56);
+    }
+
+    .deck-card.selected {
+      border-color: #f1c40f;
+      box-shadow: 0 0 14px rgba(241,196,15,0.85);
+    }
+
+    .deck-card-inner {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+      transition: transform 0.55s cubic-bezier(.2,.7,.2,1.1);
+    }
+
+    .deck-card.flipped .deck-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .deck-card-face {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 6px;
+      border-radius: 6px;
+      overflow: hidden;
+      backface-visibility: hidden;
+      background: linear-gradient(145deg, rgba(255,255,255,0.17), rgba(255,255,255,0.04));
+    }
+
+    .deck-card-back {
+      transform: rotateY(180deg);
+      background: linear-gradient(145deg, rgba(241,196,15,0.22), rgba(10,17,28,0.94));
+      font-size: 10px;
+      line-height: 1.2;
+      text-align: left;
+      align-items: stretch;
+    }
+
+    .deck-card img {
+      width: 76%;
+      height: 64%;
+      object-fit: contain;
+      pointer-events: none;
+    }
+
+    .deck-card-action {
+      min-height: 22px;
+      padding: 3px 6px;
+      border: 0;
+      border-radius: 5px;
+      background: #f6f7fb;
+      color: #10213c;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: none;
+      opacity: 0;
+      transform: translateY(5px);
+      transition: opacity 0.18s, transform 0.18s;
+    }
+
+    .deck-card:hover .deck-card-action,
+    .deck-card.selected .deck-card-action,
+    .deck-card.flipped .deck-card-action {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .deck-card-stats {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .drag-ghost {
+      position: fixed;
+      width: 72px;
+      height: 72px;
+      transform: translate(-50%, -50%);
+      z-index: 2000;
+      pointer-events: none;
+      filter: drop-shadow(0 10px 10px rgba(0,0,0,0.45));
     }
 
     .hud-side {
@@ -471,7 +788,49 @@
     <div class="menu-panel">
       <h1>🐹 HAMSTER DEFENSE</h1>
       <p>Защити замок хомяков</p>
-      <button onclick="enterBattle()">🛡️ В БОЙ!</button>
+      <div class="menu-actions">
+        <button onclick="openLevelMenu()">🛡️ Играть</button>
+        <button onclick="openInventory()">🎒 Инвентарь</button>
+        <button onclick="openShop()">🛒 Магазин</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="level-modal">
+    <div class="modal-panel">
+      <h2>Выбор уровня</h2>
+      <div class="level-grid" id="level-grid"></div>
+      <button onclick="closeLevelMenu()">Назад</button>
+    </div>
+  </div>
+
+  <div class="modal" id="inventory-modal">
+    <div class="modal-panel">
+      <h2>Инвентарь</h2>
+      <div class="inventory-grid">
+        <div class="inventory-card" onclick="askAddToDeck('warrior')">
+          <img src="warior.png" alt="">
+          <b>Хомяк воин</b>
+        </div>
+        <div class="inventory-card" onclick="askAddToDeck('archer')">
+          <img src="arrow.png" alt="">
+          <b>Хомяк лучник</b>
+        </div>
+      </div>
+      <div id="inventory-message">Нажми на хомяка, чтобы положить его в колоду.</div>
+      <div class="confirm-row" id="deck-confirm">
+        <button onclick="confirmAddToDeck()">Да</button>
+        <button onclick="cancelAddToDeck()">Нет</button>
+      </div>
+      <button onclick="closeInventory()" style="margin-top:12px;">Закрыть</button>
+    </div>
+  </div>
+
+  <div class="modal" id="shop-modal">
+    <div class="modal-panel">
+      <h2>Магазин</h2>
+      <p>Магазин пока пустой.</p>
+      <button onclick="closeShop()">Закрыть</button>
     </div>
   </div>
 
@@ -481,25 +840,21 @@
       <div class="sand-patch patch-a"></div>
       <div class="sand-patch patch-b"></div>
       <div class="sand-patch patch-c"></div>
+      <div id="decor-layer"></div>
 
-      <svg id="roads" viewBox="0 0 960 540" preserveAspectRatio="none" aria-hidden="true">
-        <path class="road-base" d="M -35 90 L 160 90 L 160 365 L 345 365 L 345 270 L 480 270" />
-        <path class="road-base" d="M 995 96 L 800 96 L 800 340 L 635 340 L 635 270 L 480 270" />
-        <path class="road-mid" d="M -35 90 L 160 90 L 160 365 L 345 365 L 345 270 L 480 270" />
-        <path class="road-mid" d="M 995 96 L 800 96 L 800 340 L 635 340 L 635 270 L 480 270" />
-        <path class="road-edge" d="M -35 90 L 160 90 L 160 365 L 345 365 L 345 270 L 480 270" />
-        <path class="road-edge" d="M 995 96 L 800 96 L 800 340 L 635 340 L 635 270 L 480 270" />
-      </svg>
+      <svg id="roads" viewBox="0 0 960 540" preserveAspectRatio="none" aria-hidden="true"></svg>
 
       <div class="base-container">
         <div class="hp-bar-bg"><div id="hp-fill"></div></div>
         <img src="castle-removebg-preview.png" class="base-img" alt="">
       </div>
 
-      <div id="selection-menu">
-        <div class="select-card" onclick="placeHamster('warrior')"><img src="warior.png" alt="">Воин</div>
-        <div class="select-card" onclick="placeHamster('archer')"><img src="arrow.png" alt="">Стрелок</div>
+      <div id="wave-label">Волна 1/5</div>
+      <div class="battle-top-buttons">
+        <button id="speed-btn" onclick="toggleSpeed()">2x</button>
+        <button id="skip-wave-btn" onclick="skipWave()" disabled>Скип</button>
       </div>
+      <div class="upgrade-panel" id="upgrade-panel"></div>
 
       <div id="win-screen">
         <h2>Волна отбита!</h2>
@@ -511,11 +866,11 @@
 
     <div id="battle-hud">
       <div class="deck" aria-label="Колода">
-        <div class="deck-card"></div>
-        <div class="deck-card"></div>
-        <div class="deck-card"></div>
-        <div class="deck-card"></div>
-        <div class="deck-card"></div>
+        <div class="deck-card" id="deck-card-0"></div>
+        <div class="deck-card" id="deck-card-1"></div>
+        <div class="deck-card" id="deck-card-2"></div>
+        <div class="deck-card" id="deck-card-3"></div>
+        <div class="deck-card" id="deck-card-4"></div>
       </div>
       <div class="hud-side">
         <div class="coin-counter">🪙 <span id="coin-count">200</span></div>
@@ -525,44 +880,141 @@
     </div>
   </div>
 
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script>
+    // Картинки хомяков: обычное состояние и 2 кадра атаки.
     const ASSETS = {
       warrior: { stand: 'warior.png', anim1: 'anim_war-removebg-preview.png', anim2: 'anim_war2-removebg-preview.png' },
       archer: { stand: 'arrow.png', anim1: 'anim_arow1-removebg-preview.png', anim2: 'anim_arow2-removebg-preview.png' }
     };
 
+    // Данные карт хомяков в инвентаре и колоде.
+    const HAMSTERS = {
+      warrior: {
+        name: 'Воин',
+        img: 'warior.png',
+        stats: ['Цена: 100', 'Лимит: 4', 'Урон: 2.4', 'Радиус: 110', 'Атака: быстрая']
+      },
+      archer: {
+        name: 'Лучник',
+        img: 'arrow.png',
+        stats: ['Цена: 100', 'Лимит: 4', 'Урон: 2', 'Радиус: 2.4 клетки', 'Скорострельность: 2.4 сек']
+      }
+    };
+
+    const HAMSTER_UPGRADES = {
+      warrior: [
+        { damage: 2.4, range: 110, delay: 760 },
+        { damage: 3.1, range: 125, delay: 700 },
+        { damage: 4.0, range: 140, delay: 640 },
+        { damage: 5.1, range: 155, delay: 580 },
+        { damage: 6.4, range: 170, delay: 520 }
+      ],
+      archer: [
+        { damage: 2.0, range: 145, delay: 2400 },
+        { damage: 2.7, range: 165, delay: 2200 },
+        { damage: 3.5, range: 185, delay: 2000 },
+        { damage: 4.5, range: 210, delay: 1800 },
+        { damage: 5.8, range: 235, delay: 1600 }
+      ]
+    };
+
+    const UPGRADE_COSTS = { 2: 100, 3: 300, 4: 500, 5: 900 };
+
+    // Обычные враги
     const ENEMIES = [
       { icon: '🐛', hp: 4, speed: 58, dmg: 8 },
       { icon: '🐝', hp: 6, speed: 68, dmg: 10 },
       { icon: '🕷️', hp: 9, speed: 50, dmg: 14 }
     ];
 
-    const PATHS = [
-      [{x:-35,y:90}, {x:160,y:90}, {x:160,y:365}, {x:345,y:365}, {x:345,y:270}, {x:480,y:270}],
-      [{x:995,y:96}, {x:800,y:96}, {x:800,y:340}, {x:635,y:340}, {x:635,y:270}, {x:480,y:270}]
+    // Настройки 5 волн матча
+    const WAVE_CONFIGS = [
+      { count: 10, enemyTypes: [0], hpMult: 0.8, speedMult: 0.75, dmgMult: 0.7, spawnDelay: 980 },
+      { count: 15, enemyTypes: [0, 1, 2], hpMult: 1, speedMult: 1, dmgMult: 1, spawnDelay: 860 },
+      { count: 15, enemyTypes: [0, 1, 2], hpMult: 1.45, speedMult: 1.14, dmgMult: 1.25, spawnDelay: 800 },
+      { count: 15, enemyTypes: [0, 1, 2], hpMult: 1.9, speedMult: 1.28, dmgMult: 1.55, spawnDelay: 740 },
+      {
+        count: 15,
+        enemyTypes: [0, 1, 2],
+        hpMult: 1.9,
+        speedMult: 1.28,
+        dmgMult: 1.55,
+        spawnDelay: 740,
+        boss: { icon: '🐞', hp: 95, speed: 34, dmg: 9999 }
+      }
     ];
 
+    // Дороги для разных атмосфер. 1-10: 2 дороги, 11-20: 3 дороги, 21-30: 4 дороги.
+    const LEVEL_PATHS = {
+      summer: [
+      [{x:-35,y:90}, {x:160,y:90}, {x:160,y:365}, {x:345,y:365}, {x:345,y:270}, {x:480,y:270}],
+      [{x:995,y:96}, {x:800,y:96}, {x:800,y:340}, {x:635,y:340}, {x:635,y:270}, {x:480,y:270}]
+      ],
+      snow: [
+        [{x:-35,y:80}, {x:180,y:80}, {x:180,y:250}, {x:370,y:250}, {x:370,y:270}, {x:480,y:270}],
+        [{x:995,y:110}, {x:790,y:110}, {x:790,y:360}, {x:610,y:360}, {x:610,y:270}, {x:480,y:270}],
+        [{x:470,y:-35}, {x:470,y:130}, {x:560,y:130}, {x:560,y:270}, {x:480,y:270}]
+      ],
+      desert: [
+        [{x:-35,y:85}, {x:145,y:85}, {x:145,y:410}, {x:360,y:410}, {x:360,y:270}, {x:480,y:270}],
+        [{x:995,y:90}, {x:820,y:90}, {x:820,y:365}, {x:650,y:365}, {x:650,y:270}, {x:480,y:270}],
+        [{x:130,y:-35}, {x:130,y:180}, {x:310,y:180}, {x:310,y:270}, {x:480,y:270}],
+        [{x:835,y:575}, {x:835,y:455}, {x:565,y:455}, {x:565,y:270}, {x:480,y:270}]
+      ]
+    };
+
+    let PATHS = LEVEL_PATHS.summer;
+
+    // Размер карты и сетки клеток для размещения
     const GAME = { width: 960, height: 540 };
     const GRID = { cols: 16, rows: 9, cellW: 60, cellH: 60 };
+    const SAVE_VERSION = 1;
+    const SAVE_API_URL = '/api/progress';
+
+    // Лимиты хомяков на поле
+    const HAMSTER_LIMITS = { total: 13, warrior: 4, archer: 4 };
+
+    // Радиусы блокировки
     const ROAD_RADIUS = 54;
     const CASTLE_RADIUS = 95;
     const EXTRA_BLOCKED_CELLS = new Set(['9,5', '10,5']);
+
+    // Главное состояние игры: волна, деньги, здоровье замка, враги и колода.
     let SLOT_COUNT = 0;
     let wave = 1;
+    let unlockedLevel = 1;
+    let currentLevel = 1;
     let gold = 200;
     let hp = 100;
     let killed = 0;
     let finishedEnemies = 0;
+    let currentWaveFinished = 0;
+    let currentWaveTotal = 16;
     let targetKills = 16;
     let roundRewardPaid = false;
+    let bossSpawned = false;
+    let skipRewardPaid = false;
+    let activeWaves = 0;
+    let gameSpeed = 1;
     let enemies = [];
     let placed = [];
     let lastAtk = [];
-    let currentSlot = null;
+    let selectedPlacedSlot = null;
+    let selectedDeckCard = null;
+    let pendingDeckType = null;
+    let deckCards = [];
+    let flippedCards = new Set();
+    let dragGhost = null;
     let running = false;
-    let spawnTimer = null;
+    let spawnTimers = [];
+    let bossTimers = [];
+    let saveReady = false;
+    let saveTimer = null;
+    let savedPlaced = null;
     let lastFrame = performance.now();
 
+    // Проверяет, открыт ли телефон вертикально, чтобы включить виртуальный landscape.
     function shouldUsePortraitLandscape() {
       return window.innerHeight > window.innerWidth && window.innerWidth <= 820;
     }
@@ -571,19 +1023,197 @@
       document.getElementById('main-menu').classList.remove('portrait-landscape');
     }
 
-    async function enterBattle() {
+    // Возвращает id аккаунта Telegram. Если игра открыта не в Telegram, будет local.
+    function getTelegramUserId() {
+      return window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 'local';
+    }
+
+    // Ключ сохранения: у каждого Telegram аккаунта свой прогресс.
+    function getSaveKey() {
+      return `hamster-defense-progress:${getTelegramUserId()}`;
+    }
+
+    // Данные, которые сохраняются между запусками игры.
+    function collectProgress() {
+      return {
+        version: SAVE_VERSION,
+        tgUserId: getTelegramUserId(),
+        gold,
+        wave,
+        unlockedLevel,
+        currentLevel,
+        deckCards: [...deckCards],
+        placed: placed.map(hamster => hamster ? { type: hamster.type, level: hamster.level } : null)
+      };
+    }
+
+    // Применяет сохраненный прогресс к игре.
+    function applyProgress(progress) {
+      if (!progress || progress.version !== SAVE_VERSION) return;
+      gold = Number.isFinite(progress.gold) ? progress.gold : 200;
+      wave = Math.min(5, Math.max(1, Number.isFinite(progress.wave) ? progress.wave : 1));
+      unlockedLevel = Math.min(30, Math.max(1, Number.isFinite(progress.unlockedLevel) ? progress.unlockedLevel : 1));
+      currentLevel = Math.min(30, Math.max(1, Number.isFinite(progress.currentLevel) ? progress.currentLevel : 1));
+      if (currentLevel > unlockedLevel) currentLevel = unlockedLevel;
+      deckCards = Array.isArray(progress.deckCards)
+        ? progress.deckCards.filter(type => HAMSTERS[type]).slice(0, 5)
+        : [];
+      savedPlaced = Array.isArray(progress.placed) ? progress.placed : null;
+      updateGold();
+      updateWaveLabel();
+      renderDeck();
+    }
+
+    // Загружает прогресс: сначала с сервера бота, если он есть, потом из localStorage.
+    async function loadProgress() {
+      let progress = null;
+      const tgUserId = getTelegramUserId();
+      const initData = window.Telegram?.WebApp?.initData || '';
+
+      if (tgUserId !== 'local') {
+        try {
+          const response = await fetch(`${SAVE_API_URL}?tgUserId=${encodeURIComponent(tgUserId)}`, {
+            headers: { 'X-Telegram-Init-Data': initData }
+          });
+          if (response.ok) progress = await response.json();
+        } catch (error) {}
+      }
+
+      if (!progress) {
+        try {
+          progress = JSON.parse(localStorage.getItem(getSaveKey()));
+        } catch (error) {}
+      }
+
+      applyProgress(progress);
+      saveReady = true;
+    }
+
+    // Сохраняет прогресс локально и отправляет на сервер бота, если он подключен.
+    function saveProgress() {
+      if (!saveReady) return;
+      const progress = collectProgress();
+      localStorage.setItem(getSaveKey(), JSON.stringify(progress));
+
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => {
+        const initData = window.Telegram?.WebApp?.initData || '';
+        if (getTelegramUserId() === 'local') return;
+        fetch(SAVE_API_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Telegram-Init-Data': initData
+          },
+          body: JSON.stringify(progress)
+        }).catch(() => {});
+      }, 350);
+    }
+
+    // окно инвентаря.
+    function openInventory() {
+      document.getElementById('inventory-modal').style.display = 'flex';
+      cancelAddToDeck();
+    }
+
+    function openLevelMenu() {
+      renderLevelMenu();
+      document.getElementById('level-modal').style.display = 'flex';
+    }
+
+    function closeLevelMenu() {
+      document.getElementById('level-modal').style.display = 'none';
+    }
+
+    function renderLevelMenu() {
+      const grid = document.getElementById('level-grid');
+      grid.innerHTML = '';
+      for (let level = 1; level <= 30; level++) {
+        const button = document.createElement('button');
+        const locked = level > unlockedLevel;
+        button.className = `level-dot ${getBiome(level)}${locked ? ' locked' : ''}`;
+        button.textContent = locked ? '🔒' : level;
+        button.title = locked ? `Пройди уровень ${level - 1}` : `Уровень ${level}`;
+        button.onclick = () => {
+          if (locked) return;
+          enterBattle(level);
+        };
+        grid.appendChild(button);
+      }
+    }
+
+    function closeInventory() {
+      document.getElementById('inventory-modal').style.display = 'none';
+    }
+
+    // Открывает окно магазина. Пока это заглушка.
+    function openShop() {
+      document.getElementById('shop-modal').style.display = 'flex';
+    }
+
+    function closeShop() {
+      document.getElementById('shop-modal').style.display = 'none';
+    }
+
+    // добавить ли выбранного хомяка в колоду.
+    function askAddToDeck(type) {
+      pendingDeckType = type;
+      document.getElementById('inventory-message').textContent = `Поставить "${HAMSTERS[type].name}" в колоду?`;
+      document.getElementById('deck-confirm').style.display = 'grid';
+    }
+
+    // Добавляет карту хомяка в колоду, если такой карты там еще нет.
+    function confirmAddToDeck() {
+      if (!pendingDeckType) return;
+      if (deckCards.includes(pendingDeckType)) {
+        document.getElementById('inventory-message').textContent = `${HAMSTERS[pendingDeckType].name} уже есть в колоде.`;
+        pendingDeckType = null;
+        document.getElementById('deck-confirm').style.display = 'none';
+        return;
+      }
+      if (deckCards.length >= 5) {
+        document.getElementById('inventory-message').textContent = 'Колода уже заполнена.';
+        return;
+      }
+      deckCards.push(pendingDeckType);
+      renderDeck();
+      document.getElementById('inventory-message').textContent = `${HAMSTERS[pendingDeckType].name} добавлен в колоду.`;
+      pendingDeckType = null;
+      document.getElementById('deck-confirm').style.display = 'none';
+      saveProgress();
+    }
+
+    function cancelAddToDeck() {
+      pendingDeckType = null;
+      document.getElementById('inventory-message').textContent = 'Нажми на хомяка, чтобы положить его в колоду.';
+      document.getElementById('deck-confirm').style.display = 'none';
+    }
+
+    // Запускает бой из главного меню.
+    async function enterBattle(levelNumber = currentLevel) {
+      if (deckCards.length === 0) {
+        alert('Сначала положи хомяка в колоду через инвентарь!');
+        return;
+      }
       await requestGameFullscreen();
+      currentLevel = levelNumber;
+      wave = 1;
+      applyLevelMap();
+      closeLevelMenu();
       document.getElementById('main-menu').style.display = 'none';
       document.getElementById('main-menu').classList.remove('portrait-landscape');
       document.getElementById('battle-screen').style.display = 'flex';
       document.body.classList.add('battle-active');
       updateGameScale();
       buildGrid();
+      restorePlacedHamsters();
       resetBattle();
       updateGold();
+      renderDeck();
       setTimeout(updateGameScale, 350);
     }
 
+    // Пытается открыть игру на весь экран и повернуть в landscape.
     async function requestGameFullscreen() {
       const root = document.documentElement;
       try {
@@ -611,6 +1241,7 @@
       }
     }
 
+    // Масштабирует карту и нижнюю панель под размер экрана.
     function updateGameScale() {
       const screen = document.getElementById('battle-screen');
       const hud = document.getElementById('battle-hud');
@@ -630,6 +1261,7 @@
       screen.style.setProperty('--game-height', GAME.height * scale + 'px');
     }
 
+    // Создает клетки на всей карте и блокирует дороги/замок.
     function buildGrid() {
       const field = document.getElementById('battle-field');
       field.querySelectorAll('.slot').forEach(slot => slot.remove());
@@ -652,7 +1284,7 @@
           if (isBlockedCell(center, col, row)) {
             slot.classList.add('road-cell');
           } else {
-            slot.onclick = () => openSelect(slotIndex);
+            slot.onclick = () => handleSlotClick(slotIndex);
           }
 
           field.appendChild(slot);
@@ -664,6 +1296,70 @@
       SLOT_COUNT = placed.length;
     }
 
+    function getBiome(level = currentLevel) {
+      if (level <= 10) return 'summer';
+      if (level <= 20) return 'snow';
+      return 'desert';
+    }
+
+    function applyLevelMap() {
+      const biome = getBiome();
+      PATHS = LEVEL_PATHS[biome];
+      const field = document.getElementById('battle-field');
+      field.classList.remove('summer', 'snow', 'desert');
+      field.classList.add(biome);
+      renderRoads();
+      renderDecorations(biome);
+    }
+
+    function renderRoads() {
+      const roads = document.getElementById('roads');
+      const pathData = PATHS.map(path => `M ${path.map(point => `${point.x} ${point.y}`).join(' L ')}`);
+      roads.innerHTML = `
+        ${pathData.map(d => `<path class="road-base" d="${d}" />`).join('')}
+        ${pathData.map(d => `<path class="road-mid" d="${d}" />`).join('')}
+        ${pathData.map(d => `<path class="road-edge" d="${d}" />`).join('')}
+      `;
+    }
+
+    function renderDecorations(biome) {
+      const layer = document.getElementById('decor-layer');
+      const decor = {
+        summer: [
+          ['decor/tree_green_1.png', 70, 286, 82], ['decor/tree_green_2.png', 282, 58, 70],
+          ['decor/rock_large.png', 842, 418, 68], ['decor/rock_small.png', 706, 42, 52]
+        ],
+        snow: [
+          ['decor/rock_large.png', 76, 342, 66], ['decor/rock_small.png', 268, 72, 46],
+          ['decor/tree_snow_1.png', 830, 390, 82], ['decor/tree_snow_christmas.png', 672, 38, 78]
+        ],
+        desert: [
+          ['decor/rock_desert.png', 86, 330, 72], ['decor/tree_palm_1.png', 245, 88, 78],
+          ['decor/tree_burned_1.png', 760, 74, 72], ['decor/rock_large.png', 840, 425, 64]
+        ]
+      }[biome];
+      layer.innerHTML = decor.map(([src, x, y, size]) =>
+        `<img class="map-decor" src="${src}" style="left:${x}px;top:${y}px;width:${size}px;height:${size}px;">`
+      ).join('');
+    }
+
+    // Восстанавливает хомяков на клетках после перезапуска страницы.
+    function restorePlacedHamsters() {
+      if (!savedPlaced) return;
+      savedPlaced.forEach((hamster, slotIndex) => {
+        if (!hamster || !HAMSTERS[hamster.type] || slotIndex >= placed.length) return;
+        const slot = document.getElementById('slot-' + slotIndex);
+        if (!slot || slot.classList.contains('road-cell')) return;
+        placed[slotIndex] = {
+          type: hamster.type,
+          level: Math.min(5, Math.max(1, hamster.level || 1))
+        };
+        slot.classList.add('placed');
+        setHamsterImage(slotIndex, 'stand');
+      });
+    }
+
+    // Проверяет, можно ли ставить хомяка на эту клетку.
     function isBlockedCell(center, col, row) {
       if (EXTRA_BLOCKED_CELLS.has(`${col},${row}`)) return true;
       if (Math.hypot(center.x - 480, center.y - 270) < CASTLE_RADIUS) return true;
@@ -687,49 +1383,228 @@
       return Math.hypot(point.x - x, point.y - y);
     }
 
+    // Сбрасывает волну: убирает врагов, восстанавливает HP и кнопку старта.
     function resetBattle() {
       enemies.forEach(enemy => enemy.el.remove());
       enemies = [];
       killed = 0;
       finishedEnemies = 0;
+      currentWaveFinished = 0;
       roundRewardPaid = false;
+      bossSpawned = false;
+      skipRewardPaid = false;
+      activeWaves = 0;
       hp = 100;
       running = false;
-      targetKills = 14 + wave * 2;
+      currentWaveTotal = getWaveConfig(wave).count + (getWaveConfig(wave).boss ? 1 : 0);
+      targetKills = currentWaveTotal;
       document.getElementById('win-screen').style.display = 'none';
+      document.querySelector('#win-screen h2').textContent = 'Волна отбита!';
+      document.querySelector('#win-screen button').textContent = 'Следующая волна';
       document.getElementById('start-btn').disabled = false;
       updateHp();
+      updateWaveLabel();
+      updateSkipButton();
     }
 
-    function openSelect(slotIndex) {
-      if (running || placed[slotIndex]) return;
-      const slot = document.getElementById('slot-' + slotIndex);
-      if (slot.classList.contains('road-cell')) return;
-      currentSlot = slotIndex;
-      const menu = document.getElementById('selection-menu');
-      const field = document.getElementById('battle-field');
-      const x = Math.max(96, Math.min(field.clientWidth - 96, slot.offsetLeft + slot.offsetWidth / 2));
-      const y = Math.max(78, Math.min(field.clientHeight - 78, slot.offsetTop - 76));
-      menu.style.left = x + 'px';
-      menu.style.top = y + 'px';
-      menu.style.display = 'flex';
+    // Рисует карты в нижней колоде и их переворот с характеристиками.
+    function renderDeck() {
+      for (let i = 0; i < 5; i++) {
+        const card = document.getElementById('deck-card-' + i);
+        const type = deckCards[i];
+        card.className = 'deck-card';
+        card.innerHTML = '';
+        card.onpointerdown = null;
+        card.onclick = null;
+
+        if (!type) continue;
+        card.classList.add('available');
+        if (selectedDeckCard === i) card.classList.add('selected');
+        if (flippedCards.has(i)) card.classList.add('flipped');
+        card.innerHTML = `
+          <div class="deck-card-inner">
+            <div class="deck-card-face deck-card-front">
+              <img src="${HAMSTERS[type].img}" alt="">
+              <span>${HAMSTERS[type].name}</span>
+              <button class="deck-card-action" type="button">Характеристики</button>
+            </div>
+            <div class="deck-card-face deck-card-back">
+              <b>${HAMSTERS[type].name}</b>
+              <ul class="deck-card-stats">${HAMSTERS[type].stats.map(stat => `<li>${stat}</li>`).join('')}</ul>
+              <button class="deck-card-action" type="button">Обратно</button>
+            </div>
+          </div>
+        `;
+        card.onclick = () => selectDeckCard(i);
+        card.onpointerdown = event => startDeckDrag(event, i);
+        card.querySelector('.deck-card-front .deck-card-action').onclick = event => {
+          event.stopPropagation();
+          flippedCards.add(i);
+          renderDeck();
+        };
+        card.querySelector('.deck-card-back .deck-card-action').onclick = event => {
+          event.stopPropagation();
+          flippedCards.delete(i);
+          renderDeck();
+        };
+      }
     }
 
-    function placeHamster(type) {
-      if (currentSlot === null) return;
-      placed[currentSlot] = type;
-      document.getElementById('slot-' + currentSlot).classList.add('placed');
-      setHamsterImage(currentSlot, 'stand');
-      document.getElementById('selection-menu').style.display = 'none';
-      currentSlot = null;
+    // Выбирает карту в колоде кликом.
+    function selectDeckCard(cardIndex) {
+      selectedDeckCard = selectedDeckCard === cardIndex ? null : cardIndex;
+      renderDeck();
     }
 
-    function setHamsterImage(slotIndex, state) {
-      const type = placed[slotIndex];
+    // Ставит выбранного хомяка на клетку за 100 монет.
+    function handleSlotClick(slotIndex) {
+      if (placed[slotIndex]) {
+        openUpgradePanel(slotIndex);
+        return;
+      }
+      placeSelectedHamster(slotIndex);
+    }
+
+    function placeSelectedHamster(slotIndex) {
+      if (running || placed[slotIndex] || selectedDeckCard === null) return;
+      const type = deckCards[selectedDeckCard];
       if (!type) return;
-      document.getElementById('slot-' + slotIndex).innerHTML = `<img src="${ASSETS[type][state]}" alt="">`;
+      if (gold < 100) {
+        alert('Нужно 100 монет!');
+        return;
+      }
+      const limitMessage = getPlacementLimitMessage(type);
+      if (limitMessage) {
+        alert(limitMessage);
+        return;
+      }
+      placeHamsterOnSlot(slotIndex, type);
     }
 
+    function placeHamsterOnSlot(slotIndex, type) {
+      const slot = document.getElementById('slot-' + slotIndex);
+      if (!slot || slot.classList.contains('road-cell') || placed[slotIndex] || running) return;
+      gold -= 100;
+      updateGold();
+      placed[slotIndex] = { type, level: 1 };
+      slot.classList.add('placed');
+      setHamsterImage(slotIndex, 'stand');
+      selectedDeckCard = null;
+      renderDeck();
+      saveProgress();
+    }
+
+    // Проверяет лимиты: всего 13, воинов 4, лучников 4.
+    function getPlacementLimitMessage(type) {
+      const totalPlaced = placed.filter(Boolean).length;
+      if (totalPlaced >= HAMSTER_LIMITS.total) return 'Всего можно поставить только 13 хомяков.';
+
+      const typePlaced = placed.filter(hamster => hamster && hamster.type === type).length;
+      if (typePlaced >= HAMSTER_LIMITS[type]) {
+        return type === 'archer'
+          ? 'Лимит лучников: 4.'
+          : 'Лимит мечников: 4.';
+      }
+
+      return '';
+    }
+
+    function getHamsterStats(hamster) {
+      return HAMSTER_UPGRADES[hamster.type][hamster.level - 1];
+    }
+
+    function openUpgradePanel(slotIndex) {
+      const hamster = placed[slotIndex];
+      if (!hamster) return;
+      selectedPlacedSlot = slotIndex;
+      const panel = document.getElementById('upgrade-panel');
+      const slot = document.getElementById('slot-' + slotIndex);
+      const stats = getHamsterStats(hamster);
+      const nextCost = UPGRADE_COSTS[hamster.level + 1];
+      const nextStats = hamster.level < 5 ? HAMSTER_UPGRADES[hamster.type][hamster.level] : null;
+
+      panel.style.left = Math.max(8, slot.offsetLeft - 202) + 'px';
+      panel.style.top = Math.max(8, Math.min(390, slot.offsetTop - 12)) + 'px';
+      panel.innerHTML = `
+        <h3>${HAMSTERS[hamster.type].name} ${hamster.level} ур.</h3>
+        <ul>
+          <li>Урон: ${stats.damage}</li>
+          <li>Радиус: ${Math.round(stats.range / GRID.cellW * 10) / 10} клетки</li>
+          <li>Скорострельность: ${stats.delay / 1000} сек</li>
+          ${nextStats ? `<li>После улучшения: ${nextStats.damage} урон, ${Math.round(nextStats.range / GRID.cellW * 10) / 10} клетки, ${nextStats.delay / 1000} сек</li>` : '<li>Максимальный уровень</li>'}
+        </ul>
+        ${nextCost ? `<button onclick="upgradeSelectedHamster()">Улучшить за ${nextCost} 🪙</button>` : ''}
+        <button class="close-upgrade" onclick="closeUpgradePanel()">Закрыть</button>
+      `;
+      panel.style.display = 'block';
+    }
+
+    function closeUpgradePanel() {
+      selectedPlacedSlot = null;
+      document.getElementById('upgrade-panel').style.display = 'none';
+    }
+
+    function upgradeSelectedHamster() {
+      const hamster = placed[selectedPlacedSlot];
+      if (!hamster || hamster.level >= 5) return;
+      const cost = UPGRADE_COSTS[hamster.level + 1];
+      if (gold < cost) {
+        alert('Не хватает монет!');
+        return;
+      }
+      gold -= cost;
+      hamster.level++;
+      updateGold();
+      openUpgradePanel(selectedPlacedSlot);
+      saveProgress();
+    }
+
+    // Перетаскивание карты из колоды на клетку.
+    function startDeckDrag(event, cardIndex) {
+      if (event.target.closest('.deck-card-action')) return;
+      if (flippedCards.has(cardIndex)) return;
+      const type = deckCards[cardIndex];
+      if (!type) return;
+
+      dragGhost = document.createElement('img');
+      dragGhost.className = 'drag-ghost';
+      dragGhost.src = HAMSTERS[type].img;
+      document.body.appendChild(dragGhost);
+      moveDragGhost(event.clientX, event.clientY);
+
+      const move = moveEvent => moveDragGhost(moveEvent.clientX, moveEvent.clientY);
+      const up = upEvent => {
+        document.removeEventListener('pointermove', move);
+        document.removeEventListener('pointerup', up);
+        if (dragGhost) dragGhost.remove();
+        dragGhost = null;
+
+        const target = document.elementFromPoint(upEvent.clientX, upEvent.clientY);
+        const slot = target && target.closest ? target.closest('.slot') : null;
+        if (slot && !slot.classList.contains('road-cell')) {
+          selectedDeckCard = cardIndex;
+          placeSelectedHamster(Number(slot.id.replace('slot-', '')));
+        }
+      };
+
+      document.addEventListener('pointermove', move);
+      document.addEventListener('pointerup', up);
+    }
+
+    function moveDragGhost(x, y) {
+      if (!dragGhost) return;
+      dragGhost.style.left = x + 'px';
+      dragGhost.style.top = y + 'px';
+    }
+
+    // Меняет картинку хомяка: стоит, 1-й кадр атаки, 2-й кадр атаки.
+    function setHamsterImage(slotIndex, state) {
+      const hamster = placed[slotIndex];
+      if (!hamster) return;
+      document.getElementById('slot-' + slotIndex).innerHTML = `<img src="${ASSETS[hamster.type][state]}" alt="">`;
+    }
+
+    // Запускает текущую волну врагов.
     function startWave() {
       if (!placed.some(Boolean)) {
         alert('Поставь хотя бы одного хомяка!');
@@ -737,28 +1612,57 @@
       }
 
       running = true;
-      killed = 0;
+      closeUpgradePanel();
+      targetKills = 0;
       finishedEnemies = 0;
+      killed = 0;
       roundRewardPaid = false;
+      bossSpawned = false;
+      startWaveSpawn(wave);
+      updateWaveLabel();
       document.getElementById('start-btn').disabled = true;
-      let spawned = 0;
-      spawnTimer = setInterval(() => {
-        if (spawned >= targetKills) {
-          clearInterval(spawnTimer);
-          spawnTimer = null;
-          return;
-        }
-        spawnEnemy(spawned % 2);
-        spawned++;
-      }, 850);
+      updateSkipButton();
     }
 
-    function spawnEnemy(pathIndex) {
-      const base = ENEMIES[Math.min(ENEMIES.length - 1, Math.floor(Math.random() * (1 + Math.min(2, wave))))];
+    function startWaveSpawn(waveNumber) {
+      const config = getWaveConfig(waveNumber);
+      activeWaves++;
+      currentWaveFinished = 0;
+      currentWaveTotal = config.count + (config.boss ? 1 : 0);
+      targetKills += currentWaveTotal;
+      skipRewardPaid = false;
+      let spawned = 0;
+      const timer = setInterval(() => {
+        if (spawned >= config.count) {
+          clearInterval(timer);
+          spawnTimers = spawnTimers.filter(item => item !== timer);
+          if (config.boss) {
+            const bossTimer = setTimeout(() => {
+              bossTimers = bossTimers.filter(item => item !== bossTimer);
+              if (running && !bossSpawned) spawnBoss(config);
+            }, 1400);
+            bossTimers.push(bossTimer);
+          }
+          activeWaves--;
+          return;
+        }
+        spawnEnemy(spawned % 2, config);
+        spawned++;
+      }, config.spawnDelay);
+      spawnTimers.push(timer);
+    }
+
+    // Создает обычного врага на одной из дорог.
+    function spawnEnemy(pathIndex, config = getWaveConfig()) {
+      const enemyIndex = config.enemyTypes[Math.floor(Math.random() * config.enemyTypes.length)];
+      const base = ENEMIES[enemyIndex];
       const path = PATHS[pathIndex];
+      const enemyHp = Math.ceil(base.hp * config.hpMult);
+      const enemySpeed = Math.round(base.speed * config.speedMult);
+      const enemyDmg = Math.ceil(base.dmg * config.dmgMult);
       const el = document.createElement('div');
       el.className = 'enemy';
-      el.innerHTML = `<span class="enemy-hp">${base.hp + wave}</span><span>${base.icon}</span>`;
+      el.innerHTML = `<span class="enemy-hp">${enemyHp}</span><span>${base.icon}</span>`;
       document.getElementById('battle-field').appendChild(el);
 
       const enemy = {
@@ -767,29 +1671,62 @@
         segment: 0,
         x: path[0].x,
         y: path[0].y,
-        hp: base.hp + wave,
-        maxHp: base.hp + wave,
-        speed: base.speed + wave * 2,
-        dmg: base.dmg,
+        hp: enemyHp,
+        maxHp: enemyHp,
+        speed: enemySpeed,
+        dmg: enemyDmg,
+        isBoss: false,
         dead: false
       };
       enemies.push(enemy);
       positionEnemy(enemy);
     }
 
+    // Создает босса на 5-й волне.
+    function spawnBoss(config = getWaveConfig(wave)) {
+      if (!config.boss) return;
+      bossSpawned = true;
+      const pathIndex = Math.random() < 0.5 ? 0 : 1;
+      const path = PATHS[pathIndex];
+      const boss = config.boss;
+      const el = document.createElement('div');
+      el.className = 'enemy boss';
+      el.innerHTML = `<span class="enemy-hp">${boss.hp}</span><span>${boss.icon}</span>`;
+      document.getElementById('battle-field').appendChild(el);
+
+      const enemy = {
+        el,
+        path,
+        segment: 0,
+        x: path[0].x,
+        y: path[0].y,
+        hp: boss.hp,
+        maxHp: boss.hp,
+        speed: boss.speed,
+        dmg: boss.dmg,
+        isBoss: true,
+        dead: false
+      };
+      enemies.push(enemy);
+      positionEnemy(enemy);
+    }
+
+    // Главный игровой цикл: двигает врагов, атакует и проверяет конец волны.
     function gameLoop(now) {
-      const dt = Math.min(0.04, (now - lastFrame) / 1000);
+      const dt = Math.min(0.04, (now - lastFrame) / 1000) * gameSpeed;
       lastFrame = now;
 
       if (running) {
         moveEnemies(dt);
         attackEnemies(now);
-        if (finishedEnemies >= targetKills && enemies.length === 0 && !spawnTimer) endWave();
+        updateSkipButton();
+        if (finishedEnemies >= targetKills && enemies.length === 0 && spawnTimers.length === 0 && bossTimers.length === 0 && activeWaves === 0) endWave();
       }
 
       requestAnimationFrame(gameLoop);
     }
 
+    // Двигает врагов по точкам дороги.
     function moveEnemies(dt) {
       [...enemies].forEach(enemy => {
         if (enemy.dead) return;
@@ -821,13 +1758,16 @@
       });
     }
 
+    // Хомяки ищут врага в радиусе и атакуют.
     function attackEnemies(now) {
-      placed.forEach((type, slotIndex) => {
-        if (!type) return;
+      placed.forEach((hamster, slotIndex) => {
+        if (!hamster) return;
+        const type = hamster.type;
+        const stats = getHamsterStats(hamster);
         const slotCenter = getSlotCenter(slotIndex);
-        const range = type === 'warrior' ? 110 : 235;
-        const delay = type === 'warrior' ? 760 : 1150;
-        const damage = type === 'warrior' ? 2.4 : 1.8;
+        const range = stats.range;
+        const delay = stats.delay;
+        const damage = stats.damage;
         const target = enemies
           .filter(enemy => Math.hypot(enemy.x - slotCenter.x, enemy.y - slotCenter.y) <= range)
           .sort((a, b) => b.segment - a.segment || distanceToCastle(a) - distanceToCastle(b))[0];
@@ -845,23 +1785,26 @@
       });
     }
 
+    // Анимация атаки хомяка.
     function animateHamster(slotIndex, type, onHit) {
       setHamsterImage(slotIndex, 'anim1');
       setTimeout(() => {
-        if (placed[slotIndex] !== type) return;
+        if (!placed[slotIndex] || placed[slotIndex].type !== type) return;
         setHamsterImage(slotIndex, 'anim2');
         onHit();
       }, 160);
       setTimeout(() => {
-        if (placed[slotIndex] === type) setHamsterImage(slotIndex, 'stand');
+        if (placed[slotIndex] && placed[slotIndex].type === type) setHamsterImage(slotIndex, 'stand');
       }, 420);
     }
 
+    // Полет стрелы лучника до врага.
     function shootArrow(from, target, damage) {
       const arrow = document.createElement('div');
       arrow.className = 'projectile-arrow';
       arrow.style.left = from.x + 'px';
       arrow.style.top = from.y + 'px';
+      arrow.style.setProperty('--arrow-angle', '0rad');
       document.getElementById('battle-field').appendChild(arrow);
 
       const fly = setInterval(() => {
@@ -884,11 +1827,12 @@
         } else {
           arrow.style.left = ax + dx / dist * 16 + 'px';
           arrow.style.top = ay + dy / dist * 16 + 'px';
-          arrow.style.rotate = Math.atan2(dy, dx) + 'rad';
+          arrow.style.setProperty('--arrow-angle', Math.atan2(dy, dx) + 'rad');
         }
       }, 24);
     }
 
+    // Наносит урон врагу и дает +5 монет за убийство.
     function hitEnemy(enemy, amount) {
       if (enemy.dead) return;
       enemy.hp -= amount;
@@ -898,50 +1842,111 @@
         enemies = enemies.filter(item => item !== enemy);
         killed++;
         finishedEnemies++;
+        currentWaveFinished++;
         gold += 5;
         updateGold();
+        updateSkipButton();
       } else {
         enemy.el.querySelector('.enemy-hp').textContent = Math.ceil(enemy.hp);
       }
     }
 
+    // Враг дошел до замка: наносит урон, а босс сразу проигрывает матч.
     function damageCastle(enemy) {
+      if (enemy.isBoss) {
+        enemy.dead = true;
+        enemy.el.remove();
+        enemies = enemies.filter(item => item !== enemy);
+        alert('Босс прорвался к замку! Поражение.');
+        location.reload();
+        return;
+      }
       hp -= enemy.dmg;
       updateHp();
       enemy.dead = true;
       enemy.el.remove();
       enemies = enemies.filter(item => item !== enemy);
       finishedEnemies++;
+      currentWaveFinished++;
+      updateSkipButton();
       if (hp <= 0) {
         alert('Замок пал!');
         location.reload();
       }
     }
 
+    // Завершает волну и выдает бонус монет за состояние замка.
     function endWave() {
       if (roundRewardPaid) return;
       running = false;
       roundRewardPaid = true;
-      gold += hp >= 100 ? 200 : 100;
+      if (!skipRewardPaid) gold += hp >= 100 ? 200 : 100;
       updateGold();
+      if (wave >= 5) {
+        document.querySelector('#win-screen h2').textContent = 'Матч пройден!';
+        document.querySelector('#win-screen button').textContent = 'В меню';
+        if (currentLevel >= unlockedLevel && unlockedLevel < 30) {
+          unlockedLevel = currentLevel + 1;
+        }
+        saveProgress();
+      }
       document.getElementById('win-screen').style.display = 'block';
     }
 
+    // Переход на следующую волну или завершение матча после 5-й.
     function nextWave() {
+      if (wave >= 5) {
+        alert('Матч пройден!');
+        exitToMenu();
+        return;
+      }
       wave++;
       resetBattle();
     }
 
+    function skipWave() {
+      if (!canSkipWave()) return;
+      skipRewardPaid = true;
+      gold += hp >= 100 ? 200 : 100;
+      updateGold();
+      document.getElementById('skip-wave-btn').disabled = true;
+
+      if (wave >= 5) return;
+      wave++;
+      startWaveSpawn(wave);
+      updateWaveLabel();
+    }
+
+    function canSkipWave() {
+      return running && !skipRewardPaid && wave < 5 && currentWaveFinished >= Math.ceil(currentWaveTotal / 2);
+    }
+
+    function toggleSpeed() {
+      gameSpeed = gameSpeed === 1 ? 2 : 1;
+      document.getElementById('speed-btn').classList.toggle('active', gameSpeed === 2);
+    }
+
+    function updateSkipButton() {
+      document.getElementById('skip-wave-btn').disabled = !canSkipWave();
+    }
+
+    // Возвращает из боя в главное меню.
     function exitToMenu() {
-      if (spawnTimer) {
-        clearInterval(spawnTimer);
-        spawnTimer = null;
-      }
+      spawnTimers.forEach(timer => clearInterval(timer));
+      spawnTimers = [];
+      bossTimers.forEach(timer => clearTimeout(timer));
+      bossTimers = [];
       enemies.forEach(enemy => enemy.el.remove());
       enemies = [];
       running = false;
-      currentSlot = null;
-      document.getElementById('selection-menu').style.display = 'none';
+      closeUpgradePanel();
+      activeWaves = 0;
+      gameSpeed = 1;
+      document.getElementById('speed-btn').classList.remove('active');
+      document.getElementById('skip-wave-btn').disabled = true;
+      selectedDeckCard = null;
+      if (dragGhost) dragGhost.remove();
+      dragGhost = null;
       document.getElementById('win-screen').style.display = 'none';
       document.getElementById('battle-screen').style.display = 'none';
       document.getElementById('battle-screen').classList.remove('portrait-landscape');
@@ -949,15 +1954,45 @@
       document.getElementById('main-menu').style.display = 'flex';
       document.body.classList.remove('battle-active');
       updateMenuOrientation();
+      saveProgress();
       if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
     }
 
+    // Обновляет полоску здоровья замка.
     function updateHp() {
       document.getElementById('hp-fill').style.width = Math.max(0, hp) + '%';
     }
 
+    // Обновляет счетчик монет.
     function updateGold() {
       document.getElementById('coin-count').textContent = gold;
+      saveProgress();
+    }
+
+    // Обновляет надпись "Волна X/5".
+    function updateWaveLabel() {
+      document.getElementById('wave-label').textContent = `Уровень ${currentLevel} | Волна ${wave}/5`;
+      saveProgress();
+    }
+
+    function getWaveConfig(waveNumber = wave) {
+      const base = WAVE_CONFIGS[Math.min(waveNumber - 1, WAVE_CONFIGS.length - 1)];
+      const levelPower = 1 + (currentLevel - 1) * 0.07;
+      const config = {
+        ...base,
+        hpMult: base.hpMult * levelPower,
+        speedMult: base.speedMult * (1 + (currentLevel - 1) * 0.018),
+        dmgMult: base.dmgMult * (1 + (currentLevel - 1) * 0.045),
+        spawnDelay: Math.max(430, base.spawnDelay - (currentLevel - 1) * 10)
+      };
+      if (base.boss) {
+        config.boss = {
+          ...base.boss,
+          hp: Math.ceil(base.boss.hp * levelPower),
+          speed: Math.round(base.boss.speed * (1 + (currentLevel - 1) * 0.012))
+        };
+      }
+      return config;
     }
 
     function positionEnemy(enemy) {
@@ -996,9 +2031,8 @@
     }
 
     document.getElementById('battle-field').addEventListener('click', event => {
-      if (!event.target.classList.contains('slot')) {
-        document.getElementById('selection-menu').style.display = 'none';
-      }
+      if (!event.target.classList.contains('slot')) selectedDeckCard = null;
+      renderDeck();
     });
 
     window.addEventListener('resize', () => {
@@ -1011,7 +2045,10 @@
         updateGameScale();
       }, 350);
     });
+    window.Telegram?.WebApp?.ready?.();
+    window.Telegram?.WebApp?.expand?.();
     updateMenuOrientation();
+    loadProgress();
     requestAnimationFrame(gameLoop);
   </script>
 </body>

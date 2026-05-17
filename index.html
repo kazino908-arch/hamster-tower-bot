@@ -179,10 +179,23 @@
       height: 100vw;
       min-height: 0;
       padding: 8px;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       transform: rotate(90deg) translateY(-100%);
       transform-origin: top left;
       background: #0b1e3d;
       z-index: 900;
+    }
+
+    #battle-screen.phone-landscape {
+      min-height: 100vh;
+      padding: 8px;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
     }
 
     #battle-viewport {
@@ -455,9 +468,12 @@
 
     .enemy {
       position: absolute;
+      left: 0;
+      top: 0;
       width: 48px;
       height: 54px;
-      transform: translate(-50%, -50%);
+      transform: translate3d(0, 0, 0) translate(-50%, -50%);
+      will-change: transform;
       z-index: 7;
       display: flex;
       flex-direction: column;
@@ -748,38 +764,121 @@
       #exit-menu-btn { font-size: 13px; padding: 8px 8px; }
     }
 
-    #battle-screen.virtual-landscape #battle-hud {
-      grid-template-columns: 1fr auto;
-      gap: 10px;
+    #battle-screen.virtual-landscape #battle-hud,
+    #battle-screen.phone-landscape #battle-hud {
+      width: var(--game-hud-width, 154px);
+      grid-template-columns: 1fr;
+      gap: 6px;
+      align-self: center;
     }
 
-    #battle-screen.virtual-landscape .deck {
-      grid-template-columns: repeat(5, minmax(42px, 1fr));
-      gap: 7px;
-      padding: 7px;
+    #battle-screen.virtual-landscape .deck,
+    #battle-screen.phone-landscape .deck {
+      grid-template-columns: repeat(2, minmax(42px, 1fr));
+      grid-auto-rows: minmax(54px, auto);
+      gap: 6px;
+      padding: 6px;
     }
 
-    #battle-screen.virtual-landscape .deck-card {
+    #battle-screen.virtual-landscape .deck-card,
+    #battle-screen.phone-landscape .deck-card {
       aspect-ratio: 3 / 4;
+      min-width: 0;
     }
 
-    #battle-screen.virtual-landscape .hud-side {
-      min-width: 132px;
+    #battle-screen.virtual-landscape .hud-side,
+    #battle-screen.phone-landscape .hud-side {
+      min-width: 0;
       grid-template-columns: none;
       grid-template-rows: auto auto 1fr;
-      gap: 7px;
+      gap: 6px;
     }
 
-    #battle-screen.virtual-landscape .coin-counter {
-      min-height: 34px;
-      font-size: 15px;
-      padding: 6px 8px;
+    #battle-screen.virtual-landscape .coin-counter,
+    #battle-screen.phone-landscape .coin-counter {
+      min-height: 30px;
+      font-size: 14px;
+      padding: 5px 7px;
     }
 
     #battle-screen.virtual-landscape #start-btn,
-    #battle-screen.virtual-landscape #exit-menu-btn {
-      font-size: 13px;
-      padding: 8px 8px;
+    #battle-screen.virtual-landscape #exit-menu-btn,
+    #battle-screen.phone-landscape #start-btn,
+    #battle-screen.phone-landscape #exit-menu-btn {
+      font-size: 12px;
+      padding: 7px 6px;
+      min-height: 32px;
+    }
+
+    #battle-screen.mobile-optimized #battle-field,
+    #battle-screen.mobile-optimized .deck,
+    #battle-screen.mobile-optimized .coin-counter,
+    #battle-screen.mobile-optimized .battle-top-buttons button,
+    #battle-screen.mobile-optimized #wave-label {
+      box-shadow: none;
+    }
+
+    #battle-screen.mobile-optimized .map-decor,
+    #battle-screen.mobile-optimized .slot img,
+    #battle-screen.mobile-optimized .base-img,
+    #battle-screen.mobile-optimized .projectile-arrow,
+    #battle-screen.mobile-optimized .enemy {
+      filter: none;
+    }
+
+    #battle-screen.mobile-optimized .map-decor {
+      opacity: 0.78;
+    }
+
+    #battle-screen.tiny-phone {
+      padding: 5px;
+      gap: 5px;
+    }
+
+    #battle-screen.tiny-phone.virtual-landscape #battle-hud,
+    #battle-screen.tiny-phone.phone-landscape #battle-hud {
+      width: var(--game-hud-width, 132px);
+      gap: 5px;
+    }
+
+    #battle-screen.tiny-phone.virtual-landscape .deck,
+    #battle-screen.tiny-phone.phone-landscape .deck {
+      gap: 5px;
+      padding: 5px;
+      grid-auto-rows: minmax(46px, auto);
+    }
+
+    #battle-screen.tiny-phone .deck-card-face {
+      padding: 4px;
+      gap: 2px;
+    }
+
+    #battle-screen.tiny-phone .deck-card-action {
+      min-height: 18px;
+      padding: 2px 4px;
+      font-size: 9px;
+    }
+
+    #battle-screen.tiny-phone #wave-label {
+      top: 6px;
+      padding: 4px 9px;
+      font-size: 12px;
+    }
+
+    #battle-screen.tiny-phone .battle-top-buttons {
+      right: 6px;
+      top: 6px;
+      gap: 5px;
+    }
+
+    #battle-screen.tiny-phone .battle-top-buttons button {
+      min-width: 42px;
+      padding: 4px 5px;
+      font-size: 11px;
+    }
+
+    #battle-screen.tiny-phone .map-decor:nth-child(n+5) {
+      display: none;
     }
   </style>
 </head>
@@ -1013,10 +1112,20 @@
     let saveTimer = null;
     let savedPlaced = null;
     let lastFrame = performance.now();
+    let mobilePerformanceMode = false;
 
     // Проверяет, открыт ли телефон вертикально, чтобы включить виртуальный landscape.
     function shouldUsePortraitLandscape() {
-      return window.innerHeight > window.innerWidth && window.innerWidth <= 820;
+      return window.innerHeight > window.innerWidth && Math.min(window.innerWidth, window.innerHeight) <= 820;
+    }
+
+    // Ширина боковой панели в мобильном landscape: маленьким телефонам отдаем больше места карте.
+    function getMobileHudWidth(viewportWidth, viewportHeight) {
+      const shortSide = Math.min(viewportWidth, viewportHeight);
+      if (shortSide <= 360) return 118;
+      if (shortSide <= 390) return 128;
+      if (shortSide <= 430) return 142;
+      return 154;
     }
 
     function updateMenuOrientation() {
@@ -1248,14 +1357,25 @@
       const useVirtualLandscape = shouldUsePortraitLandscape();
       const viewportWidth = useVirtualLandscape ? window.innerHeight : window.innerWidth;
       const viewportHeight = useVirtualLandscape ? window.innerWidth : window.innerHeight;
-      const verticalPadding = useVirtualLandscape ? 16 : 34;
-      const hudHeight = hud ? hud.offsetHeight + 12 : 106;
-      const availableWidth = viewportWidth - (useVirtualLandscape ? 16 : 24);
-      const availableHeight = viewportHeight - verticalPadding - hudHeight;
-      const scale = Math.min(1, availableWidth / GAME.width, availableHeight / GAME.height);
+      const usePhoneLandscape = !useVirtualLandscape && viewportWidth > viewportHeight && viewportHeight <= 560 && viewportWidth <= 1180;
+      const useSideHud = useVirtualLandscape || usePhoneLandscape;
+      const tinyPhone = Math.min(window.innerWidth, window.innerHeight) <= 390 || viewportHeight <= 390;
+      const hudWidth = useSideHud ? getMobileHudWidth(viewportWidth, viewportHeight) : 0;
+      const verticalPadding = useSideHud ? (tinyPhone ? 10 : 16) : 34;
 
       screen.classList.toggle('virtual-landscape', useVirtualLandscape);
+      screen.classList.toggle('phone-landscape', usePhoneLandscape);
+      screen.classList.toggle('mobile-optimized', useSideHud || window.innerWidth <= 760 || window.innerHeight <= 520);
+      screen.classList.toggle('tiny-phone', tinyPhone);
       screen.classList.remove('portrait-landscape');
+      screen.style.setProperty('--game-hud-width', hudWidth + 'px');
+
+      const hudHeight = hud ? hud.offsetHeight + 12 : 106;
+      const availableWidth = useSideHud ? viewportWidth - hudWidth - 24 : viewportWidth - 24;
+      const availableHeight = useSideHud ? viewportHeight - verticalPadding : viewportHeight - verticalPadding - hudHeight;
+      const scale = Math.max(0.42, Math.min(1, availableWidth / GAME.width, availableHeight / GAME.height));
+
+      mobilePerformanceMode = screen.classList.contains('mobile-optimized');
       screen.style.setProperty('--game-scale', scale);
       screen.style.setProperty('--game-width', GAME.width * scale + 'px');
       screen.style.setProperty('--game-height', GAME.height * scale + 'px');
@@ -1768,9 +1888,19 @@
         const range = stats.range;
         const delay = stats.delay;
         const damage = stats.damage;
-        const target = enemies
-          .filter(enemy => Math.hypot(enemy.x - slotCenter.x, enemy.y - slotCenter.y) <= range)
-          .sort((a, b) => b.segment - a.segment || distanceToCastle(a) - distanceToCastle(b))[0];
+        let target = null;
+        let targetScore = -Infinity;
+
+        for (const enemy of enemies) {
+          const dx = enemy.x - slotCenter.x;
+          const dy = enemy.y - slotCenter.y;
+          if (dx * dx + dy * dy > range * range) continue;
+          const progressScore = enemy.segment * 10000 - distanceToCastle(enemy);
+          if (progressScore > targetScore) {
+            target = enemy;
+            targetScore = progressScore;
+          }
+        }
 
         if (!target || now - lastAtk[slotIndex] < delay) return;
         lastAtk[slotIndex] = now;
@@ -1951,6 +2081,9 @@
       document.getElementById('battle-screen').style.display = 'none';
       document.getElementById('battle-screen').classList.remove('portrait-landscape');
       document.getElementById('battle-screen').classList.remove('virtual-landscape');
+      document.getElementById('battle-screen').classList.remove('phone-landscape');
+      document.getElementById('battle-screen').classList.remove('mobile-optimized');
+      document.getElementById('battle-screen').classList.remove('tiny-phone');
       document.getElementById('main-menu').style.display = 'flex';
       document.body.classList.remove('battle-active');
       updateMenuOrientation();
@@ -1996,8 +2129,7 @@
     }
 
     function positionEnemy(enemy) {
-      enemy.el.style.left = enemy.x + 'px';
-      enemy.el.style.top = enemy.y + 'px';
+      enemy.el.style.transform = `translate3d(${enemy.x}px, ${enemy.y}px, 0) translate(-50%, -50%)`;
     }
 
     function getSlotCenter(slotIndex) {

@@ -70,6 +70,64 @@
       width: 100%;
     }
 
+    .layout-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 6px;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      background: rgba(5, 14, 28, 0.72);
+    }
+
+    .layout-switch button {
+      padding: 10px 12px;
+      font-size: 15px;
+      border-radius: 7px;
+      box-shadow: none;
+      background: rgba(255,255,255,0.12);
+      color: white;
+    }
+
+    .layout-switch button.active {
+      background: #f1c40f;
+      color: #10213c;
+    }
+
+    .menu-coins {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      margin-top: 10px;
+      padding: 8px 14px;
+      border: 2px solid #f1c40f;
+      border-radius: 999px;
+      background: rgba(5, 14, 28, 0.78);
+      color: #ffe28a;
+      font-weight: 800;
+    }
+
+    .modal button:disabled {
+      opacity: 0.58;
+      cursor: default;
+    }
+
+    body.layout-pc .menu-panel {
+      width: min(520px, calc(100vw - 40px));
+      padding: 34px;
+    }
+
+    body.layout-pc .menu-panel h1 {
+      font-size: 42px;
+    }
+
+    body.layout-pc .menu-actions button {
+      font-size: 21px;
+      padding: 15px 30px;
+    }
+
     .modal {
       position: fixed;
       inset: 0;
@@ -121,6 +179,34 @@
       object-fit: contain;
       display: block;
       margin: 0 auto 6px;
+    }
+
+    .shop-card {
+      display: grid;
+      grid-template-columns: 96px 1fr;
+      gap: 12px;
+      align-items: center;
+      margin: 12px 0 16px;
+      padding: 12px;
+      border: 2px solid rgba(255,255,255,0.24);
+      border-radius: 10px;
+      background: rgba(255,255,255,0.08);
+      text-align: left;
+    }
+
+    .shop-card img {
+      width: 96px;
+      height: 96px;
+      object-fit: contain;
+    }
+
+    .shop-card h3 {
+      margin: 0 0 6px;
+    }
+
+    .shop-card p {
+      margin: 0 0 10px;
+      color: rgba(255,255,255,0.82);
     }
 
     .confirm-row {
@@ -209,14 +295,13 @@
       position: relative;
       width: 960px;
       height: 540px;
+      --grid-line: rgba(255,255,255,0.18);
       transform: scale(var(--game-scale, 1));
       transform-origin: top left;
       background:
         radial-gradient(circle at 52% 50%, rgba(255, 246, 178, 0.2) 0 5%, transparent 6%),
-        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px),
-        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
         linear-gradient(135deg, #315f4c, #7b6243 48%, #3a6a50);
-      background-size: auto, 80px 80px, 80px 80px, auto;
+      background-size: auto, auto;
       border: 0;
       outline: 6px solid #27313b;
       border-radius: 8px;
@@ -226,30 +311,39 @@
     }
 
     #battle-field.summer {
+      --grid-line: rgba(255,255,255,0.18);
       background:
         radial-gradient(circle at 52% 50%, rgba(255, 246, 178, 0.2) 0 5%, transparent 6%),
-        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px),
-        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
         linear-gradient(135deg, #315f4c, #7b6243 48%, #3a6a50);
-      background-size: auto, 80px 80px, 80px 80px, auto;
+      background-size: auto, auto;
     }
 
     #battle-field.snow {
+      --grid-line: rgba(52,90,124,0.18);
       background:
         radial-gradient(circle at 52% 50%, rgba(255,255,255,0.38) 0 6%, transparent 7%),
-        linear-gradient(90deg, rgba(52,90,124,0.12) 1px, transparent 1px),
-        linear-gradient(rgba(52,90,124,0.12) 1px, transparent 1px),
         linear-gradient(135deg, #cfe7ef, #8eb4cb 46%, #e8f5f8);
-      background-size: auto, 80px 80px, 80px 80px, auto;
+      background-size: auto, auto;
     }
 
     #battle-field.desert {
+      --grid-line: rgba(113,78,32,0.22);
       background:
         radial-gradient(circle at 52% 50%, rgba(255,238,138,0.32) 0 6%, transparent 7%),
-        linear-gradient(90deg, rgba(113,78,32,0.12) 1px, transparent 1px),
-        linear-gradient(rgba(113,78,32,0.12) 1px, transparent 1px),
         linear-gradient(135deg, #d8b05f, #b47a38 46%, #e3c77a);
-      background-size: auto, 80px 80px, 80px 80px, auto;
+      background-size: auto, auto;
+    }
+
+    #map-grid {
+      position: absolute;
+      inset: 0;
+      z-index: 6;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+        linear-gradient(var(--grid-line) 1px, transparent 1px);
+      background-size: 60px 60px;
+      background-position: 0 0;
     }
 
     #decor-layer {
@@ -287,21 +381,21 @@
     .road-base {
       fill: none;
       stroke: #b77b43;
-      stroke-width: 78;
+      stroke-width: 58;
       stroke-linejoin: round;
       stroke-linecap: round;
     }
     .road-mid {
       fill: none;
       stroke: #d8b16b;
-      stroke-width: 58;
+      stroke-width: 42;
       stroke-linejoin: round;
       stroke-linecap: round;
     }
     .road-edge {
       fill: none;
       stroke: rgba(102, 67, 36, 0.55);
-      stroke-width: 4;
+      stroke-width: 3;
       stroke-dasharray: 12 16;
       stroke-linejoin: round;
       stroke-linecap: round;
@@ -390,8 +484,8 @@
       position: absolute;
       width: 60px;
       height: 60px;
-      background: rgba(255, 255, 255, 0.09);
-      border: 1px solid rgba(255,255,255,0.28);
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255,255,255,0.12);
       border-radius: 4px;
       z-index: 10;
       display: flex;
@@ -400,8 +494,8 @@
       cursor: pointer;
     }
     .slot:hover {
-      background: rgba(255,255,255,0.2);
-      border-color: rgba(255,255,255,0.72);
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.42);
     }
     .slot img {
       width: 142%;
@@ -411,7 +505,7 @@
       filter: drop-shadow(0 6px 4px rgba(0,0,0,0.35));
     }
     .slot.road-cell {
-      background: rgba(60, 38, 17, 0.08);
+      background: transparent;
       border-color: transparent;
       cursor: default;
       pointer-events: none;
@@ -466,6 +560,11 @@
       color: #10213c;
     }
 
+    .upgrade-panel .sell-hamster {
+      margin-top: 7px;
+      background: #e74c3c;
+    }
+
     .enemy {
       position: absolute;
       left: 0;
@@ -507,6 +606,20 @@
       min-width: 42px;
     }
 
+    .dragon-fire-mark {
+      position: absolute;
+      left: 50%;
+      top: 58%;
+      width: 62px;
+      height: 62px;
+      transform: translate(-50%, -50%);
+      background: url('dragon_fire_sphere.png') no-repeat center / contain;
+      z-index: -1;
+      pointer-events: none;
+      animation: dragonFireSpin 1s linear infinite;
+      filter: drop-shadow(0 0 9px rgba(255, 115, 18, 0.9));
+    }
+
     .projectile-arrow {
       position: absolute;
       width: 34px;
@@ -517,6 +630,12 @@
       z-index: 30;
       pointer-events: none;
       filter: drop-shadow(0 2px 2px rgba(0,0,0,0.35));
+    }
+    .projectile-arrow.magic {
+      width: 50px;
+      height: 36px;
+      background-image: url('magic_arrow-removebg-preview.png');
+      filter: drop-shadow(0 0 7px rgba(114, 218, 255, 0.82));
     }
     .attack-effect {
       position: absolute;
@@ -539,6 +658,18 @@
       pointer-events: none;
       animation: pop 0.28s forwards;
     }
+    .magic-splash {
+      position: absolute;
+      width: 118px;
+      height: 118px;
+      transform: translate(-50%, -50%) scale(0.4);
+      border-radius: 50%;
+      border: 3px solid rgba(126, 222, 255, 0.85);
+      background: radial-gradient(circle, rgba(188,245,255,0.65), rgba(98,179,255,0.16) 48%, transparent 70%);
+      z-index: 29;
+      pointer-events: none;
+      animation: magicBurst 0.34s forwards;
+    }
     @keyframes strike {
       from { opacity: 1; transform: translate(-50%, -50%) scale(0.5) rotate(-35deg); }
       to { opacity: 0; transform: translate(-50%, -50%) scale(1.9) rotate(25deg); }
@@ -546,6 +677,15 @@
     @keyframes pop {
       from { opacity: 1; transform: translate(-50%, -50%) scale(0.35); }
       to { opacity: 0; transform: translate(-50%, -50%) scale(1.35); }
+    }
+    @keyframes magicBurst {
+      from { opacity: 0.95; transform: translate(-50%, -50%) scale(0.35); }
+      to { opacity: 0; transform: translate(-50%, -50%) scale(1.2); }
+    }
+    @keyframes dragonFireSpin {
+      from { opacity: 0.82; transform: translate(-50%, -50%) rotate(0deg) scale(0.84); }
+      50% { opacity: 1; transform: translate(-50%, -50%) rotate(180deg) scale(1); }
+      to { opacity: 0.82; transform: translate(-50%, -50%) rotate(360deg) scale(0.84); }
     }
 
     #start-btn {
@@ -887,6 +1027,11 @@
     <div class="menu-panel">
       <h1>🐹 HAMSTER DEFENSE</h1>
       <p>Защити замок хомяков</p>
+      <div class="menu-coins">🪙 <span id="menu-coin-count">0</span></div>
+      <div class="layout-switch" aria-label="Режим экрана">
+        <button id="layout-pc-btn" onclick="setLayoutMode('pc')">ПК</button>
+        <button id="layout-phone-btn" onclick="setLayoutMode('phone')">Телефон</button>
+      </div>
       <div class="menu-actions">
         <button onclick="openLevelMenu()">🛡️ Играть</button>
         <button onclick="openInventory()">🎒 Инвентарь</button>
@@ -906,16 +1051,7 @@
   <div class="modal" id="inventory-modal">
     <div class="modal-panel">
       <h2>Инвентарь</h2>
-      <div class="inventory-grid">
-        <div class="inventory-card" onclick="askAddToDeck('warrior')">
-          <img src="warior.png" alt="">
-          <b>Хомяк воин</b>
-        </div>
-        <div class="inventory-card" onclick="askAddToDeck('archer')">
-          <img src="arrow.png" alt="">
-          <b>Хомяк лучник</b>
-        </div>
-      </div>
+      <div class="inventory-grid" id="inventory-grid"></div>
       <div id="inventory-message">Нажми на хомяка, чтобы положить его в колоду.</div>
       <div class="confirm-row" id="deck-confirm">
         <button onclick="confirmAddToDeck()">Да</button>
@@ -928,7 +1064,7 @@
   <div class="modal" id="shop-modal">
     <div class="modal-panel">
       <h2>Магазин</h2>
-      <p>Магазин пока пустой.</p>
+      <div id="shop-content"></div>
       <button onclick="closeShop()">Закрыть</button>
     </div>
   </div>
@@ -942,6 +1078,7 @@
       <div id="decor-layer"></div>
 
       <svg id="roads" viewBox="0 0 960 540" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <div id="map-grid" aria-hidden="true"></div>
 
       <div class="base-container">
         <div class="hp-bar-bg"><div id="hp-fill"></div></div>
@@ -972,7 +1109,7 @@
         <div class="deck-card" id="deck-card-4"></div>
       </div>
       <div class="hud-side">
-        <div class="coin-counter">🪙 <span id="coin-count">200</span></div>
+        <div class="coin-counter">🪙 <span id="coin-count">300</span></div>
         <button id="exit-menu-btn" onclick="exitToMenu()">В меню</button>
         <button id="start-btn" onclick="startWave()">▶️ Начать волну</button>
       </div>
@@ -984,20 +1121,54 @@
     // Картинки хомяков: обычное состояние и 2 кадра атаки.
     const ASSETS = {
       warrior: { stand: 'warior.png', anim1: 'anim_war-removebg-preview.png', anim2: 'anim_war2-removebg-preview.png' },
-      archer: { stand: 'arrow.png', anim1: 'anim_arow1-removebg-preview.png', anim2: 'anim_arow2-removebg-preview.png' }
+      archer: { stand: 'arrow.png', anim1: 'anim_arow1-removebg-preview.png', anim2: 'anim_arow2-removebg-preview.png' },
+      mage: { stand: 'Homa01-removebg-preview.png', anim1: 'Homa02-removebg-preview.png', anim2: 'Homa03-removebg-preview.png' },
+      dragon: { stand: 'fhoma-removebg-preview.png', anim1: 'fhoma1-removebg-preview.png', anim2: 'fhoma2-removebg-preview.png' },
+      seed: { stand: 'money_seed.png', anim1: 'money_seed.png', anim2: 'money_seed.png' }
     };
 
     // Данные карт хомяков в инвентаре и колоде.
     const HAMSTERS = {
       warrior: {
         name: 'Воин',
-        img: 'warior.png',
-        stats: ['Цена: 100', 'Лимит: 4', 'Урон: 2.4', 'Радиус: 110', 'Атака: быстрая']
+        img: 'warior.png'
       },
       archer: {
         name: 'Лучник',
-        img: 'arrow.png',
-        stats: ['Цена: 100', 'Лимит: 4', 'Урон: 2', 'Радиус: 2.4 клетки', 'Скорострельность: 2.4 сек']
+        img: 'arrow.png'
+      },
+      mage: {
+        name: 'Маг',
+        img: 'Homa01-removebg-preview.png'
+      },
+      dragon: {
+        name: 'Дракон',
+        img: 'fhoma-removebg-preview.png'
+      },
+      seed: {
+        name: 'Семечко',
+        img: 'money_seed.png'
+      }
+    };
+
+    const SHOP_CLASSES = {
+      mage: {
+        name: 'Хомяк маг',
+        price: 300,
+        img: 'Homa01-removebg-preview.png',
+        text: 'Стреляет магической ледяной стрелой и бьет по области.'
+      },
+      dragon: {
+        name: 'Хомяк дракон',
+        price: 500,
+        img: 'fhoma-removebg-preview.png',
+        text: 'Выжигает ближайшую цель, разгоняя урон каждую секунду.'
+      },
+      seed: {
+        name: 'Денежное семечко',
+        price: 350,
+        img: 'money_seed.png',
+        text: 'Не атакует, но приносит дополнительные боевые монеты за каждую волну.'
       }
     };
 
@@ -1015,10 +1186,33 @@
         { damage: 3.5, range: 185, delay: 2000 },
         { damage: 4.5, range: 210, delay: 1800 },
         { damage: 5.8, range: 235, delay: 1600 }
+      ],
+      mage: [
+        { damage: 4.8, splash: 2.6, splashRadius: 88, range: 185, delay: 2700 },
+        { damage: 6.1, splash: 3.4, splashRadius: 100, range: 210, delay: 2500 },
+        { damage: 7.7, splash: 4.4, splashRadius: 112, range: 235, delay: 2300 },
+        { damage: 9.6, splash: 5.6, splashRadius: 126, range: 260, delay: 2100 },
+        { damage: 12.0, splash: 7.0, splashRadius: 142, range: 290, delay: 1900 }
+      ],
+      dragon: [
+        { range: 170, rampBonus: 1.25, rampSpeed: 1.00, tickDelay: 180 },
+        { range: 195, rampBonus: 1.45, rampSpeed: 1.35, tickDelay: 150 },
+        { range: 220, rampBonus: 1.68, rampSpeed: 1.75, tickDelay: 125 },
+        { range: 250, rampBonus: 1.95, rampSpeed: 2.20, tickDelay: 105 },
+        { range: 285, rampBonus: 2.30, rampSpeed: 2.80, tickDelay: 85 }
+      ],
+      seed: [
+        { income: 100 },
+        { income: 250 },
+        { income: 400 },
+        { income: 600 },
+        { income: 750 }
       ]
     };
 
     const UPGRADE_COSTS = { 2: 100, 3: 300, 4: 500, 5: 900 };
+    const BATTLE_START_GOLD = 300;
+    const LEVEL_WIN_MENU_REWARD = 300;
 
     // Обычные враги
     const ENEMIES = [
@@ -1047,8 +1241,8 @@
     // Дороги для разных атмосфер. 1-10: 2 дороги, 11-20: 3 дороги, 21-30: 4 дороги.
     const LEVEL_PATHS = {
       summer: [
-      [{x:-35,y:90}, {x:160,y:90}, {x:160,y:365}, {x:345,y:365}, {x:345,y:270}, {x:480,y:270}],
-      [{x:995,y:96}, {x:800,y:96}, {x:800,y:340}, {x:635,y:340}, {x:635,y:270}, {x:480,y:270}]
+        [{x:-35,y:90}, {x:160,y:90}, {x:160,y:365}, {x:345,y:365}, {x:345,y:270}, {x:480,y:270}],
+        [{x:995,y:96}, {x:800,y:96}, {x:800,y:340}, {x:635,y:340}, {x:635,y:270}, {x:480,y:270}]
       ],
       snow: [
         [{x:-35,y:80}, {x:180,y:80}, {x:180,y:250}, {x:370,y:250}, {x:370,y:270}, {x:480,y:270}],
@@ -1072,19 +1266,19 @@
     const SAVE_API_URL = '/api/progress';
 
     // Лимиты хомяков на поле
-    const HAMSTER_LIMITS = { total: 13, warrior: 4, archer: 4 };
+    const HAMSTER_LIMITS = { total: 13, warrior: 4, archer: 4, mage: 4, dragon: 3, seed: 3 };
 
     // Радиусы блокировки
-    const ROAD_RADIUS = 54;
-    const CASTLE_RADIUS = 95;
-    const EXTRA_BLOCKED_CELLS = new Set(['9,5', '10,5']);
+    const ROAD_RADIUS = 31;
+    const CASTLE_RADIUS = 70;
 
     // Главное состояние игры: волна, деньги, здоровье замка, враги и колода.
     let SLOT_COUNT = 0;
     let wave = 1;
     let unlockedLevel = 1;
     let currentLevel = 1;
-    let gold = 200;
+    let menuGold = 0;
+    let battleGold = BATTLE_START_GOLD;
     let hp = 100;
     let killed = 0;
     let finishedEnemies = 0;
@@ -1099,24 +1293,29 @@
     let enemies = [];
     let placed = [];
     let lastAtk = [];
+    let dragonChannels = [];
     let selectedPlacedSlot = null;
     let selectedDeckCard = null;
     let pendingDeckType = null;
     let deckCards = [];
-    let flippedCards = new Set();
+    let ownedClasses = ['warrior', 'archer'];
     let dragGhost = null;
     let running = false;
     let spawnTimers = [];
     let bossTimers = [];
     let saveReady = false;
     let saveTimer = null;
-    let savedPlaced = null;
     let lastFrame = performance.now();
     let mobilePerformanceMode = false;
+    let layoutMode = localStorage.getItem('hamster-defense-layout-mode') || getDefaultLayoutMode();
+
+    function getDefaultLayoutMode() {
+      return window.innerWidth >= 900 && window.innerWidth > window.innerHeight ? 'pc' : 'phone';
+    }
 
     // Проверяет, открыт ли телефон вертикально, чтобы включить виртуальный landscape.
     function shouldUsePortraitLandscape() {
-      return window.innerHeight > window.innerWidth && Math.min(window.innerWidth, window.innerHeight) <= 820;
+      return layoutMode === 'phone' && window.innerHeight > window.innerWidth && Math.min(window.innerWidth, window.innerHeight) <= 820;
     }
 
     // Ширина боковой панели в мобильном landscape: маленьким телефонам отдаем больше места карте.
@@ -1130,6 +1329,25 @@
 
     function updateMenuOrientation() {
       document.getElementById('main-menu').classList.remove('portrait-landscape');
+      updateLayoutButtons();
+    }
+
+    // Ручной выбор конфигурации экрана: ПК или телефон.
+    function setLayoutMode(mode) {
+      layoutMode = mode === 'pc' ? 'pc' : 'phone';
+      localStorage.setItem('hamster-defense-layout-mode', layoutMode);
+      updateLayoutButtons();
+      updateGameScale();
+    }
+
+    function updateLayoutButtons() {
+      const pcButton = document.getElementById('layout-pc-btn');
+      const phoneButton = document.getElementById('layout-phone-btn');
+      if (!pcButton || !phoneButton) return;
+      pcButton.classList.toggle('active', layoutMode === 'pc');
+      phoneButton.classList.toggle('active', layoutMode === 'phone');
+      document.body.classList.toggle('layout-pc', layoutMode === 'pc');
+      document.body.classList.toggle('layout-phone', layoutMode === 'phone');
     }
 
     // Возвращает id аккаунта Telegram. Если игра открыта не в Telegram, будет local.
@@ -1147,28 +1365,32 @@
       return {
         version: SAVE_VERSION,
         tgUserId: getTelegramUserId(),
-        gold,
+        menuGold,
         wave,
         unlockedLevel,
         currentLevel,
-        deckCards: [...deckCards],
-        placed: placed.map(hamster => hamster ? { type: hamster.type, level: hamster.level } : null)
+        ownedClasses: [...ownedClasses],
+        deckCards: [...deckCards]
       };
     }
 
     // Применяет сохраненный прогресс к игре.
     function applyProgress(progress) {
       if (!progress || progress.version !== SAVE_VERSION) return;
-      gold = Number.isFinite(progress.gold) ? progress.gold : 200;
+      menuGold = Number.isFinite(progress.menuGold)
+        ? progress.menuGold
+        : (Number.isFinite(progress.gold) ? progress.gold : 0);
       wave = Math.min(5, Math.max(1, Number.isFinite(progress.wave) ? progress.wave : 1));
       unlockedLevel = Math.min(30, Math.max(1, Number.isFinite(progress.unlockedLevel) ? progress.unlockedLevel : 1));
       currentLevel = Math.min(30, Math.max(1, Number.isFinite(progress.currentLevel) ? progress.currentLevel : 1));
       if (currentLevel > unlockedLevel) currentLevel = unlockedLevel;
+      ownedClasses = Array.from(new Set(['warrior', 'archer', ...(Array.isArray(progress.ownedClasses) ? progress.ownedClasses : [])]))
+        .filter(type => HAMSTERS[type]);
       deckCards = Array.isArray(progress.deckCards)
-        ? progress.deckCards.filter(type => HAMSTERS[type]).slice(0, 5)
+        ? progress.deckCards.filter(type => HAMSTERS[type] && ownedClasses.includes(type)).slice(0, 5)
         : [];
-      savedPlaced = Array.isArray(progress.placed) ? progress.placed : null;
-      updateGold();
+      updateMenuGold();
+      updateBattleGold();
       updateWaveLabel();
       renderDeck();
     }
@@ -1221,6 +1443,7 @@
 
     // окно инвентаря.
     function openInventory() {
+      renderInventory();
       document.getElementById('inventory-modal').style.display = 'flex';
       cancelAddToDeck();
     }
@@ -1257,6 +1480,7 @@
 
     // Открывает окно магазина. Пока это заглушка.
     function openShop() {
+      renderShop();
       document.getElementById('shop-modal').style.display = 'flex';
     }
 
@@ -1264,8 +1488,53 @@
       document.getElementById('shop-modal').style.display = 'none';
     }
 
+    function renderInventory() {
+      const grid = document.getElementById('inventory-grid');
+      grid.innerHTML = ownedClasses.map(type => `
+        <div class="inventory-card" onclick="askAddToDeck('${type}')">
+          <img src="${HAMSTERS[type].img}" alt="">
+          <b>Хомяк ${HAMSTERS[type].name.toLowerCase()}</b>
+        </div>
+      `).join('');
+    }
+
+    function renderShop() {
+      const shop = document.getElementById('shop-content');
+      shop.innerHTML = `<p class="menu-coins">🪙 ${menuGold}</p>` + Object.entries(SHOP_CLASSES).map(([type, item]) => {
+        const owned = ownedClasses.includes(type);
+        return `
+          <div class="shop-card">
+            <img src="${item.img}" alt="">
+            <div>
+              <h3>${item.name}</h3>
+              <p>${item.text}</p>
+              <button onclick="buyClass('${type}')" ${owned ? 'disabled' : ''}>
+                ${owned ? 'Куплено' : `Купить за ${item.price} 🪙`}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function buyClass(type) {
+      const item = SHOP_CLASSES[type];
+      if (!item || ownedClasses.includes(type)) return;
+      if (menuGold < item.price) {
+        alert('Не хватает монет!');
+        return;
+      }
+      menuGold -= item.price;
+      ownedClasses.push(type);
+      updateMenuGold();
+      renderShop();
+      renderInventory();
+      saveProgress();
+    }
+
     // добавить ли выбранного хомяка в колоду.
     function askAddToDeck(type) {
+      if (!ownedClasses.includes(type)) return;
       pendingDeckType = type;
       document.getElementById('inventory-message').textContent = `Поставить "${HAMSTERS[type].name}" в колоду?`;
       document.getElementById('deck-confirm').style.display = 'grid';
@@ -1304,9 +1573,10 @@
         alert('Сначала положи хомяка в колоду через инвентарь!');
         return;
       }
-      await requestGameFullscreen();
+      if (layoutMode === 'phone') await requestGameFullscreen();
       currentLevel = levelNumber;
       wave = 1;
+      battleGold = BATTLE_START_GOLD;
       applyLevelMap();
       closeLevelMenu();
       document.getElementById('main-menu').style.display = 'none';
@@ -1315,9 +1585,8 @@
       document.body.classList.add('battle-active');
       updateGameScale();
       buildGrid();
-      restorePlacedHamsters();
       resetBattle();
-      updateGold();
+      updateBattleGold();
       renderDeck();
       setTimeout(updateGameScale, 350);
     }
@@ -1357,7 +1626,7 @@
       const useVirtualLandscape = shouldUsePortraitLandscape();
       const viewportWidth = useVirtualLandscape ? window.innerHeight : window.innerWidth;
       const viewportHeight = useVirtualLandscape ? window.innerWidth : window.innerHeight;
-      const usePhoneLandscape = !useVirtualLandscape && viewportWidth > viewportHeight && viewportHeight <= 560 && viewportWidth <= 1180;
+      const usePhoneLandscape = layoutMode === 'phone' && !useVirtualLandscape && viewportWidth > viewportHeight && viewportHeight <= 560 && viewportWidth <= 1180;
       const useSideHud = useVirtualLandscape || usePhoneLandscape;
       const tinyPhone = Math.min(window.innerWidth, window.innerHeight) <= 390 || viewportHeight <= 390;
       const hudWidth = useSideHud ? getMobileHudWidth(viewportWidth, viewportHeight) : 0;
@@ -1365,8 +1634,8 @@
 
       screen.classList.toggle('virtual-landscape', useVirtualLandscape);
       screen.classList.toggle('phone-landscape', usePhoneLandscape);
-      screen.classList.toggle('mobile-optimized', useSideHud || window.innerWidth <= 760 || window.innerHeight <= 520);
-      screen.classList.toggle('tiny-phone', tinyPhone);
+      screen.classList.toggle('mobile-optimized', layoutMode === 'phone' && (useSideHud || window.innerWidth <= 760 || window.innerHeight <= 520));
+      screen.classList.toggle('tiny-phone', layoutMode === 'phone' && tinyPhone);
       screen.classList.remove('portrait-landscape');
       screen.style.setProperty('--game-hud-width', hudWidth + 'px');
 
@@ -1387,6 +1656,7 @@
       field.querySelectorAll('.slot').forEach(slot => slot.remove());
       placed = [];
       lastAtk = [];
+      dragonChannels = [];
 
       for (let row = 0; row < GRID.rows; row++) {
         for (let col = 0; col < GRID.cols; col++) {
@@ -1410,6 +1680,7 @@
           field.appendChild(slot);
           placed.push(null);
           lastAtk.push(0);
+          dragonChannels.push(null);
         }
       }
 
@@ -1446,42 +1717,25 @@
       const layer = document.getElementById('decor-layer');
       const decor = {
         summer: [
-          ['decor/tree_green_1.png', 70, 286, 82], ['decor/tree_green_2.png', 282, 58, 70],
-          ['decor/rock_large.png', 842, 418, 68], ['decor/rock_small.png', 706, 42, 52]
+          ['Tree1.png', 70, 286, 82], ['Tree2.png', 282, 58, 70],
+          ['Rock4_1.png', 842, 418, 68], ['Rock2_3.png', 706, 42, 52]
         ],
         snow: [
-          ['decor/rock_large.png', 76, 342, 66], ['decor/rock_small.png', 268, 72, 46],
-          ['decor/tree_snow_1.png', 830, 390, 82], ['decor/tree_snow_christmas.png', 672, 38, 78]
+          ['Rock4_1.png', 76, 342, 66], ['Rock2_3.png', 268, 72, 46],
+          ['Snow_tree1.png', 830, 390, 82], ['Snow_christmass_tree1.png', 672, 38, 78]
         ],
         desert: [
-          ['decor/rock_desert.png', 86, 330, 72], ['decor/tree_palm_1.png', 245, 88, 78],
-          ['decor/tree_burned_1.png', 760, 74, 72], ['decor/rock_large.png', 840, 425, 64]
+          ['Rock5_2.png', 86, 330, 72], ['Palm_tree1_1.png', 245, 88, 78],
+          ['Burned_tree1.png', 760, 74, 72], ['Rock4_1.png', 840, 425, 64]
         ]
       }[biome];
       layer.innerHTML = decor.map(([src, x, y, size]) =>
-        `<img class="map-decor" src="${src}" style="left:${x}px;top:${y}px;width:${size}px;height:${size}px;">`
+        `<img class="map-decor" src="${src}" alt="" loading="eager" decoding="async" style="left:${x}px;top:${y}px;width:${size}px;height:${size}px;">`
       ).join('');
-    }
-
-    // Восстанавливает хомяков на клетках после перезапуска страницы.
-    function restorePlacedHamsters() {
-      if (!savedPlaced) return;
-      savedPlaced.forEach((hamster, slotIndex) => {
-        if (!hamster || !HAMSTERS[hamster.type] || slotIndex >= placed.length) return;
-        const slot = document.getElementById('slot-' + slotIndex);
-        if (!slot || slot.classList.contains('road-cell')) return;
-        placed[slotIndex] = {
-          type: hamster.type,
-          level: Math.min(5, Math.max(1, hamster.level || 1))
-        };
-        slot.classList.add('placed');
-        setHamsterImage(slotIndex, 'stand');
-      });
     }
 
     // Проверяет, можно ли ставить хомяка на эту клетку.
     function isBlockedCell(center, col, row) {
-      if (EXTRA_BLOCKED_CELLS.has(`${col},${row}`)) return true;
       if (Math.hypot(center.x - 480, center.y - 270) < CASTLE_RADIUS) return true;
       return PATHS.some(path => pointNearPath(center, path, ROAD_RADIUS));
     }
@@ -1505,6 +1759,9 @@
 
     // Сбрасывает волну: убирает врагов, восстанавливает HP и кнопку старта.
     function resetBattle() {
+      dragonChannels.forEach((channel, slotIndex) => {
+        if (channel) clearDragonChannel(slotIndex);
+      });
       enemies.forEach(enemy => enemy.el.remove());
       enemies = [];
       killed = 0;
@@ -1527,7 +1784,7 @@
       updateSkipButton();
     }
 
-    // Рисует карты в нижней колоде и их переворот с характеристиками.
+    // Рисует карты в нижней колоде.
     function renderDeck() {
       for (let i = 0; i < 5; i++) {
         const card = document.getElementById('deck-card-' + i);
@@ -1540,33 +1797,16 @@
         if (!type) continue;
         card.classList.add('available');
         if (selectedDeckCard === i) card.classList.add('selected');
-        if (flippedCards.has(i)) card.classList.add('flipped');
         card.innerHTML = `
           <div class="deck-card-inner">
             <div class="deck-card-face deck-card-front">
               <img src="${HAMSTERS[type].img}" alt="">
               <span>${HAMSTERS[type].name}</span>
-              <button class="deck-card-action" type="button">Характеристики</button>
-            </div>
-            <div class="deck-card-face deck-card-back">
-              <b>${HAMSTERS[type].name}</b>
-              <ul class="deck-card-stats">${HAMSTERS[type].stats.map(stat => `<li>${stat}</li>`).join('')}</ul>
-              <button class="deck-card-action" type="button">Обратно</button>
             </div>
           </div>
         `;
         card.onclick = () => selectDeckCard(i);
         card.onpointerdown = event => startDeckDrag(event, i);
-        card.querySelector('.deck-card-front .deck-card-action').onclick = event => {
-          event.stopPropagation();
-          flippedCards.add(i);
-          renderDeck();
-        };
-        card.querySelector('.deck-card-back .deck-card-action').onclick = event => {
-          event.stopPropagation();
-          flippedCards.delete(i);
-          renderDeck();
-        };
       }
     }
 
@@ -1589,7 +1829,7 @@
       if (running || placed[slotIndex] || selectedDeckCard === null) return;
       const type = deckCards[selectedDeckCard];
       if (!type) return;
-      if (gold < 100) {
+      if (battleGold < 100) {
         alert('Нужно 100 монет!');
         return;
       }
@@ -1604,14 +1844,13 @@
     function placeHamsterOnSlot(slotIndex, type) {
       const slot = document.getElementById('slot-' + slotIndex);
       if (!slot || slot.classList.contains('road-cell') || placed[slotIndex] || running) return;
-      gold -= 100;
-      updateGold();
+      battleGold -= 100;
+      updateBattleGold();
       placed[slotIndex] = { type, level: 1 };
       slot.classList.add('placed');
       setHamsterImage(slotIndex, 'stand');
       selectedDeckCard = null;
       renderDeck();
-      saveProgress();
     }
 
     // Проверяет лимиты: всего 13, воинов 4, лучников 4.
@@ -1621,9 +1860,11 @@
 
       const typePlaced = placed.filter(hamster => hamster && hamster.type === type).length;
       if (typePlaced >= HAMSTER_LIMITS[type]) {
-        return type === 'archer'
-          ? 'Лимит лучников: 4.'
-          : 'Лимит мечников: 4.';
+        if (type === 'archer') return 'Лимит лучников: 4.';
+        if (type === 'mage') return 'Лимит магов: 4.';
+        if (type === 'dragon') return 'Лимит драконов: 3.';
+        if (type === 'seed') return 'Лимит денежных семечек: 3.';
+        return 'Лимит мечников: 4.';
       }
 
       return '';
@@ -1639,24 +1880,30 @@
       selectedPlacedSlot = slotIndex;
       const panel = document.getElementById('upgrade-panel');
       const slot = document.getElementById('slot-' + slotIndex);
-      const stats = getHamsterStats(hamster);
       const nextCost = UPGRADE_COSTS[hamster.level + 1];
-      const nextStats = hamster.level < 5 ? HAMSTER_UPGRADES[hamster.type][hamster.level] : null;
 
       panel.style.left = Math.max(8, slot.offsetLeft - 202) + 'px';
       panel.style.top = Math.max(8, Math.min(390, slot.offsetTop - 12)) + 'px';
       panel.innerHTML = `
         <h3>${HAMSTERS[hamster.type].name} ${hamster.level} ур.</h3>
         <ul>
-          <li>Урон: ${stats.damage}</li>
-          <li>Радиус: ${Math.round(stats.range / GRID.cellW * 10) / 10} клетки</li>
-          <li>Скорострельность: ${stats.delay / 1000} сек</li>
-          ${nextStats ? `<li>После улучшения: ${nextStats.damage} урон, ${Math.round(nextStats.range / GRID.cellW * 10) / 10} клетки, ${nextStats.delay / 1000} сек</li>` : '<li>Максимальный уровень</li>'}
+          <li>${getUpgradePanelText(hamster)}</li>
+          <li>Продажа: ${getHamsterSellPrice(hamster)} 🪙</li>
         </ul>
         ${nextCost ? `<button onclick="upgradeSelectedHamster()">Улучшить за ${nextCost} 🪙</button>` : ''}
+        <button class="sell-hamster" onclick="sellSelectedHamster()">Продать за ${getHamsterSellPrice(hamster)} 🪙</button>
         <button class="close-upgrade" onclick="closeUpgradePanel()">Закрыть</button>
       `;
       panel.style.display = 'block';
+    }
+
+    function getUpgradePanelText(hamster) {
+      const nextCost = UPGRADE_COSTS[hamster.level + 1];
+      if (hamster.type === 'seed') {
+        const income = getHamsterStats(hamster).income;
+        return nextCost ? `Доход за волну: ${income} 🪙` : `Максимальный доход: ${income} 🪙`;
+      }
+      return nextCost ? 'Можно улучшить хомяка.' : 'Максимальный уровень.';
     }
 
     function closeUpgradePanel() {
@@ -1668,21 +1915,54 @@
       const hamster = placed[selectedPlacedSlot];
       if (!hamster || hamster.level >= 5) return;
       const cost = UPGRADE_COSTS[hamster.level + 1];
-      if (gold < cost) {
+      if (battleGold < cost) {
         alert('Не хватает монет!');
         return;
       }
-      gold -= cost;
+      battleGold -= cost;
       hamster.level++;
-      updateGold();
+      updateBattleGold();
       openUpgradePanel(selectedPlacedSlot);
-      saveProgress();
+    }
+
+    function getHamsterSellPrice(hamster) {
+      let invested = 100;
+      for (let level = 2; level <= hamster.level; level++) {
+        invested += UPGRADE_COSTS[level] || 0;
+      }
+      return Math.floor(invested / 2);
+    }
+
+    function getSeedWaveIncome() {
+      return placed.reduce((total, hamster) => {
+        if (!hamster || hamster.type !== 'seed') return total;
+        return total + getHamsterStats(hamster).income;
+      }, 0);
+    }
+
+    function sellSelectedHamster() {
+      if (running) {
+        alert('Во время волны продавать нельзя.');
+        return;
+      }
+      const slotIndex = selectedPlacedSlot;
+      const hamster = placed[slotIndex];
+      if (!hamster) return;
+      const slot = document.getElementById('slot-' + slotIndex);
+      battleGold += getHamsterSellPrice(hamster);
+      placed[slotIndex] = null;
+      lastAtk[slotIndex] = 0;
+      clearDragonChannel(slotIndex);
+      if (slot) {
+        slot.classList.remove('placed');
+        slot.innerHTML = '';
+      }
+      closeUpgradePanel();
+      updateBattleGold();
     }
 
     // Перетаскивание карты из колоды на клетку.
     function startDeckDrag(event, cardIndex) {
-      if (event.target.closest('.deck-card-action')) return;
-      if (flippedCards.has(cardIndex)) return;
       const type = deckCards[cardIndex];
       if (!type) return;
 
@@ -1766,7 +2046,7 @@
           activeWaves--;
           return;
         }
-        spawnEnemy(spawned % 2, config);
+        spawnEnemy(spawned % PATHS.length, config);
         spawned++;
       }, config.spawnDelay);
       spawnTimers.push(timer);
@@ -1838,6 +2118,7 @@
 
       if (running) {
         moveEnemies(dt);
+        updateDragonChannels(now);
         attackEnemies(now);
         updateSkipButton();
         if (finishedEnemies >= targetKills && enemies.length === 0 && spawnTimers.length === 0 && bossTimers.length === 0 && activeWaves === 0) endWave();
@@ -1883,6 +2164,8 @@
       placed.forEach((hamster, slotIndex) => {
         if (!hamster) return;
         const type = hamster.type;
+        if (type === 'seed') return;
+        if (type === 'dragon') return;
         const stats = getHamsterStats(hamster);
         const slotCenter = getSlotCenter(slotIndex);
         const range = stats.range;
@@ -1908,11 +2191,123 @@
           if (type === 'warrior') {
             showSlash(target.x, target.y);
             hitEnemy(target, damage);
+          } else if (type === 'mage') {
+            shootMagicArrow(slotCenter, target, stats);
           } else {
             shootArrow(slotCenter, target, damage);
           }
         });
       });
+    }
+
+    function updateDragonChannels(now) {
+      placed.forEach((hamster, slotIndex) => {
+        if (!hamster || hamster.type !== 'dragon') {
+          clearDragonChannel(slotIndex);
+          return;
+        }
+
+        const stats = getHamsterStats(hamster);
+        const slotCenter = getSlotCenter(slotIndex);
+        const current = dragonChannels[slotIndex];
+        let target = current?.target;
+
+        if (!isDragonTargetValid(target, slotCenter, stats.range)) {
+          clearDragonChannel(slotIndex);
+          target = findNearestEnemy(slotCenter, stats.range);
+          if (!target) {
+            setHamsterImage(slotIndex, 'stand');
+            return;
+          }
+          dragonChannels[slotIndex] = {
+            target,
+            startedAt: now,
+            lastTick: now,
+            frame: 0,
+            lastFrameAt: 0
+          };
+          addDragonFireMark(target, slotIndex);
+        }
+
+        const channel = dragonChannels[slotIndex];
+        if (!channel) return;
+        if (now - channel.lastFrameAt > 360) {
+          channel.frame = channel.frame === 1 ? 2 : 1;
+          channel.lastFrameAt = now;
+          setHamsterImage(slotIndex, channel.frame === 1 ? 'anim1' : 'anim2');
+        }
+        if (now - channel.lastTick < stats.tickDelay) return;
+
+        const elapsedSeconds = Math.floor(((now - channel.startedAt) / 1000) * stats.rampSpeed);
+        const dps = getDragonRampDamage(elapsedSeconds) * stats.rampBonus;
+        const tickDamage = dps * ((now - channel.lastTick) / 1000);
+        channel.lastTick = now;
+        hitEnemy(channel.target, tickDamage);
+      });
+    }
+
+    function isDragonTargetValid(target, slotCenter, range) {
+      if (!target || target.dead || !target.el.parentNode) return false;
+      const dx = target.x - slotCenter.x;
+      const dy = target.y - slotCenter.y;
+      return dx * dx + dy * dy <= range * range;
+    }
+
+    function findNearestEnemy(slotCenter, range) {
+      let target = null;
+      let bestDistance = Infinity;
+      const rangeSq = range * range;
+      for (const enemy of enemies) {
+        const dx = enemy.x - slotCenter.x;
+        const dy = enemy.y - slotCenter.y;
+        const distanceSq = dx * dx + dy * dy;
+        if (distanceSq <= rangeSq && distanceSq < bestDistance) {
+          target = enemy;
+          bestDistance = distanceSq;
+        }
+      }
+      return target;
+    }
+
+    function getDragonRampDamage(seconds) {
+      const ramp = [0.35, 0.85, 1.45, 2.15, 3.0];
+      if (seconds < ramp.length) return ramp[seconds];
+      return 3 + (seconds - ramp.length + 1) * 0.75;
+    }
+
+    function clearDragonChannel(slotIndex) {
+      const channel = dragonChannels[slotIndex];
+      if (!channel) return;
+      removeDragonFireMark(channel.target, slotIndex);
+      dragonChannels[slotIndex] = null;
+    }
+
+    function clearDragonChannelsForEnemy(enemy) {
+      dragonChannels.forEach((channel, slotIndex) => {
+        if (channel?.target === enemy) clearDragonChannel(slotIndex);
+      });
+    }
+
+    function addDragonFireMark(enemy, slotIndex) {
+      if (!enemy) return;
+      if (!enemy.fireMarkUsers) enemy.fireMarkUsers = new Set();
+      enemy.fireMarkUsers.add(slotIndex);
+      if (enemy.fireMark) return;
+      const mark = document.createElement('div');
+      mark.className = 'dragon-fire-mark';
+      enemy.el.appendChild(mark);
+      enemy.fireMark = mark;
+    }
+
+    function removeDragonFireMark(enemy, slotIndex) {
+      if (!enemy?.fireMark) return;
+      if (enemy.fireMarkUsers) {
+        enemy.fireMarkUsers.delete(slotIndex);
+        if (enemy.fireMarkUsers.size > 0) return;
+      }
+      enemy.fireMark.remove();
+      enemy.fireMark = null;
+      enemy.fireMarkUsers = null;
     }
 
     // Анимация атаки хомяка.
@@ -1962,19 +2357,63 @@
       }, 24);
     }
 
+    // Магическая стрела мага: бьет цель и врагов рядом.
+    function shootMagicArrow(from, target, stats) {
+      const arrow = document.createElement('div');
+      arrow.className = 'projectile-arrow magic';
+      arrow.style.left = from.x + 'px';
+      arrow.style.top = from.y + 'px';
+      arrow.style.setProperty('--arrow-angle', '0rad');
+      document.getElementById('battle-field').appendChild(arrow);
+
+      const fly = setInterval(() => {
+        if (!target.el.parentNode || target.dead) {
+          arrow.remove();
+          clearInterval(fly);
+          return;
+        }
+        const ax = parseFloat(arrow.style.left);
+        const ay = parseFloat(arrow.style.top);
+        const dx = target.x - ax;
+        const dy = target.y - ay;
+        const dist = Math.hypot(dx, dy);
+
+        if (dist < 20) {
+          showMagicSplash(target.x, target.y);
+          const splashRadiusSq = stats.splashRadius * stats.splashRadius;
+          const hitX = target.x;
+          const hitY = target.y;
+          enemies.slice().forEach(enemy => {
+            const ex = enemy.x - hitX;
+            const ey = enemy.y - hitY;
+            if (ex * ex + ey * ey <= splashRadiusSq) {
+              hitEnemy(enemy, enemy === target ? stats.damage : stats.splash);
+            }
+          });
+          arrow.remove();
+          clearInterval(fly);
+        } else {
+          arrow.style.left = ax + dx / dist * 18 + 'px';
+          arrow.style.top = ay + dy / dist * 18 + 'px';
+          arrow.style.setProperty('--arrow-angle', Math.atan2(dy, dx) + 'rad');
+        }
+      }, 24);
+    }
+
     // Наносит урон врагу и дает +5 монет за убийство.
     function hitEnemy(enemy, amount) {
       if (enemy.dead) return;
       enemy.hp -= amount;
       if (enemy.hp <= 0) {
         enemy.dead = true;
+        clearDragonChannelsForEnemy(enemy);
         enemy.el.remove();
         enemies = enemies.filter(item => item !== enemy);
         killed++;
         finishedEnemies++;
         currentWaveFinished++;
-        gold += 5;
-        updateGold();
+        battleGold += 5;
+        updateBattleGold();
         updateSkipButton();
       } else {
         enemy.el.querySelector('.enemy-hp').textContent = Math.ceil(enemy.hp);
@@ -1985,6 +2424,7 @@
     function damageCastle(enemy) {
       if (enemy.isBoss) {
         enemy.dead = true;
+        clearDragonChannelsForEnemy(enemy);
         enemy.el.remove();
         enemies = enemies.filter(item => item !== enemy);
         alert('Босс прорвался к замку! Поражение.');
@@ -1994,6 +2434,7 @@
       hp -= enemy.dmg;
       updateHp();
       enemy.dead = true;
+      clearDragonChannelsForEnemy(enemy);
       enemy.el.remove();
       enemies = enemies.filter(item => item !== enemy);
       finishedEnemies++;
@@ -2010,11 +2451,13 @@
       if (roundRewardPaid) return;
       running = false;
       roundRewardPaid = true;
-      if (!skipRewardPaid) gold += hp >= 100 ? 200 : 100;
-      updateGold();
+      if (!skipRewardPaid) battleGold += (hp >= 100 ? 300 : 200) + getSeedWaveIncome();
+      updateBattleGold();
       if (wave >= 5) {
         document.querySelector('#win-screen h2').textContent = 'Матч пройден!';
         document.querySelector('#win-screen button').textContent = 'В меню';
+        menuGold += LEVEL_WIN_MENU_REWARD;
+        updateMenuGold();
         if (currentLevel >= unlockedLevel && unlockedLevel < 30) {
           unlockedLevel = currentLevel + 1;
         }
@@ -2037,8 +2480,8 @@
     function skipWave() {
       if (!canSkipWave()) return;
       skipRewardPaid = true;
-      gold += hp >= 100 ? 200 : 100;
-      updateGold();
+      battleGold += (hp >= 100 ? 300 : 200) + getSeedWaveIncome();
+      updateBattleGold();
       document.getElementById('skip-wave-btn').disabled = true;
 
       if (wave >= 5) return;
@@ -2069,6 +2512,9 @@
       enemies.forEach(enemy => enemy.el.remove());
       enemies = [];
       running = false;
+      dragonChannels.forEach((channel, slotIndex) => {
+        if (channel) clearDragonChannel(slotIndex);
+      });
       closeUpgradePanel();
       activeWaves = 0;
       gameSpeed = 1;
@@ -2096,10 +2542,16 @@
       document.getElementById('hp-fill').style.width = Math.max(0, hp) + '%';
     }
 
-    // Обновляет счетчик монет.
-    function updateGold() {
-      document.getElementById('coin-count').textContent = gold;
+    // Обновляет постоянные монеты меню.
+    function updateMenuGold() {
+      const menuCounter = document.getElementById('menu-coin-count');
+      if (menuCounter) menuCounter.textContent = menuGold;
       saveProgress();
+    }
+
+    // Обновляет временные монеты текущего боя.
+    function updateBattleGold() {
+      document.getElementById('coin-count').textContent = battleGold;
     }
 
     // Обновляет надпись "Волна X/5".
@@ -2110,19 +2562,19 @@
 
     function getWaveConfig(waveNumber = wave) {
       const base = WAVE_CONFIGS[Math.min(waveNumber - 1, WAVE_CONFIGS.length - 1)];
-      const levelPower = 1 + (currentLevel - 1) * 0.07;
+      const levelPower = 1 + (currentLevel - 1) * 0.05;
       const config = {
         ...base,
         hpMult: base.hpMult * levelPower,
-        speedMult: base.speedMult * (1 + (currentLevel - 1) * 0.018),
-        dmgMult: base.dmgMult * (1 + (currentLevel - 1) * 0.045),
-        spawnDelay: Math.max(430, base.spawnDelay - (currentLevel - 1) * 10)
+        speedMult: base.speedMult * (1 + (currentLevel - 1) * 0.012),
+        dmgMult: base.dmgMult * (1 + (currentLevel - 1) * 0.03),
+        spawnDelay: Math.max(500, base.spawnDelay - (currentLevel - 1) * 7)
       };
       if (base.boss) {
         config.boss = {
           ...base.boss,
           hp: Math.ceil(base.boss.hp * levelPower),
-          speed: Math.round(base.boss.speed * (1 + (currentLevel - 1) * 0.012))
+          speed: Math.round(base.boss.speed * (1 + (currentLevel - 1) * 0.008))
         };
       }
       return config;
@@ -2160,6 +2612,15 @@
       effect.style.top = y + 'px';
       document.getElementById('battle-field').appendChild(effect);
       setTimeout(() => effect.remove(), 300);
+    }
+
+    function showMagicSplash(x, y) {
+      const effect = document.createElement('div');
+      effect.className = 'magic-splash';
+      effect.style.left = x + 'px';
+      effect.style.top = y + 'px';
+      document.getElementById('battle-field').appendChild(effect);
+      setTimeout(() => effect.remove(), 360);
     }
 
     document.getElementById('battle-field').addEventListener('click', event => {

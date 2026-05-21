@@ -504,6 +504,11 @@
       pointer-events: none;
       filter: drop-shadow(0 6px 4px rgba(0,0,0,0.35));
     }
+
+    .slot img.warrior-sprite {
+      width: 170%;
+      height: 170%;
+    }
     .slot.road-cell {
       background: transparent;
       border-color: transparent;
@@ -787,6 +792,11 @@
       pointer-events: none;
     }
 
+    .deck-card img.warrior-sprite {
+      width: 88%;
+      height: 74%;
+    }
+
     .deck-card-action {
       min-height: 22px;
       padding: 3px 6px;
@@ -1026,46 +1036,47 @@
   <div id="main-menu">
     <div class="menu-panel">
       <h1>🐹 HAMSTER DEFENSE</h1>
-      <p>Защити замок хомяков</p>
+      <p id="menu-subtitle">Defend the hamster castle</p>
       <div class="menu-coins">🪙 <span id="menu-coin-count">0</span></div>
       <div class="layout-switch" aria-label="Режим экрана">
         <button id="layout-pc-btn" onclick="setLayoutMode('pc')">ПК</button>
         <button id="layout-phone-btn" onclick="setLayoutMode('phone')">Телефон</button>
       </div>
       <div class="menu-actions">
-        <button onclick="openLevelMenu()">🛡️ Играть</button>
-        <button onclick="openInventory()">🎒 Инвентарь</button>
-        <button onclick="openShop()">🛒 Магазин</button>
+        <button id="play-btn" onclick="openLevelMenu()">🛡️ Play</button>
+        <button id="inventory-btn" onclick="openInventory()">🎒 Inventory</button>
+        <button id="shop-btn" onclick="openShop()">🛒 Shop</button>
+        <button id="language-btn" onclick="toggleLanguage()">🇺🇦 Українська мова</button>
       </div>
     </div>
   </div>
 
   <div class="modal" id="level-modal">
     <div class="modal-panel">
-      <h2>Выбор уровня</h2>
+      <h2 id="level-title">Level Select</h2>
       <div class="level-grid" id="level-grid"></div>
-      <button onclick="closeLevelMenu()">Назад</button>
+      <button id="level-back-btn" onclick="closeLevelMenu()">Back</button>
     </div>
   </div>
 
   <div class="modal" id="inventory-modal">
     <div class="modal-panel">
-      <h2>Инвентарь</h2>
+      <h2 id="inventory-title">Inventory</h2>
       <div class="inventory-grid" id="inventory-grid"></div>
-      <div id="inventory-message">Нажми на хомяка, чтобы положить его в колоду.</div>
+      <div id="inventory-message">Tap a hamster to add it to the deck.</div>
       <div class="confirm-row" id="deck-confirm">
-        <button onclick="confirmAddToDeck()">Да</button>
-        <button onclick="cancelAddToDeck()">Нет</button>
+        <button id="confirm-yes-btn" onclick="confirmAddToDeck()">Yes</button>
+        <button id="confirm-no-btn" onclick="cancelAddToDeck()">No</button>
       </div>
-      <button onclick="closeInventory()" style="margin-top:12px;">Закрыть</button>
+      <button id="inventory-close-btn" onclick="closeInventory()" style="margin-top:12px;">Close</button>
     </div>
   </div>
 
   <div class="modal" id="shop-modal">
     <div class="modal-panel">
-      <h2>Магазин</h2>
+      <h2 id="shop-title">Shop</h2>
       <div id="shop-content"></div>
-      <button onclick="closeShop()">Закрыть</button>
+      <button id="shop-close-btn" onclick="closeShop()">Close</button>
     </div>
   </div>
 
@@ -1085,16 +1096,16 @@
         <img src="castle-removebg-preview.png" class="base-img" alt="">
       </div>
 
-      <div id="wave-label">Волна 1/5</div>
+      <div id="wave-label">Level 1 | Wave 1/5</div>
       <div class="battle-top-buttons">
         <button id="speed-btn" onclick="toggleSpeed()">2x</button>
-        <button id="skip-wave-btn" onclick="skipWave()" disabled>Скип</button>
+        <button id="skip-wave-btn" onclick="skipWave()" disabled>Skip</button>
       </div>
       <div class="upgrade-panel" id="upgrade-panel"></div>
 
       <div id="win-screen">
-        <h2>Волна отбита!</h2>
-        <button onclick="nextWave()">Следующая волна</button>
+        <h2>Wave Cleared!</h2>
+        <button onclick="nextWave()">Next Wave</button>
       </div>
     </div>
 
@@ -1110,17 +1121,182 @@
       </div>
       <div class="hud-side">
         <div class="coin-counter">🪙 <span id="coin-count">300</span></div>
-        <button id="exit-menu-btn" onclick="exitToMenu()">В меню</button>
-        <button id="start-btn" onclick="startWave()">▶️ Начать волну</button>
+        <button id="exit-menu-btn" onclick="exitToMenu()">Menu</button>
+        <button id="start-btn" onclick="startWave()">▶️ Start Wave</button>
       </div>
     </div>
   </div>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script>
+    const I18N = {
+      en: {
+        menuSubtitle: 'Defend the hamster castle',
+        pc: 'PC',
+        phone: 'Phone',
+        play: '🛡️ Play',
+        inventory: '🎒 Inventory',
+        shop: '🛒 Shop',
+        languageButton: '🇺🇦 Українська мова',
+        levelSelect: 'Level Select',
+        back: 'Back',
+        inventoryTitle: 'Inventory',
+        inventoryDefault: 'Tap a hamster to add it to the deck.',
+        yes: 'Yes',
+        no: 'No',
+        close: 'Close',
+        shopTitle: 'Shop',
+        deck: 'Deck',
+        skip: 'Skip',
+        menu: 'Menu',
+        startWave: '▶️ Start Wave',
+        waveCleared: 'Wave Cleared!',
+        nextWave: 'Next Wave',
+        matchCleared: 'Match Cleared!',
+        level: 'Level',
+        wave: 'Wave',
+        lockedLevel: 'Clear level {level}',
+        levelTitle: 'Level {level}',
+        bought: 'Bought',
+        buyFor: 'Buy for {price} 🪙',
+        notEnoughCoins: 'Not enough coins!',
+        putInDeck: 'Add "{name}" to the deck?',
+        alreadyInDeck: '{name} is already in the deck.',
+        deckFull: 'The deck is full.',
+        addedToDeck: '{name} added to the deck.',
+        needDeck: 'Add a hamster to the deck in inventory first!',
+        need100: 'Need 100 coins!',
+        totalLimit: 'You can place only 13 hamsters total.',
+        archerLimit: 'Archer limit: 4.',
+        mageLimit: 'Mage limit: 4.',
+        dragonLimit: 'Dragon limit: 3.',
+        seedLimit: 'Money seed limit: 3.',
+        warriorLimit: 'Warrior limit: 4.',
+        upgradeReady: 'This hamster can be upgraded.',
+        maxLevel: 'Maximum level.',
+        seedIncome: 'Wave income: {income} 🪙',
+        seedMaxIncome: 'Max income: {income} 🪙',
+        sell: 'Sell: {price} 🪙',
+        upgradeFor: 'Upgrade for {cost} 🪙',
+        sellFor: 'Sell for {price} 🪙',
+        cannotSellWave: 'You cannot sell during a wave.',
+        placeOne: 'Place at least one hamster!',
+        bossLose: 'The boss broke into the castle! Defeat.',
+        castleLose: 'The castle has fallen!',
+        matchAlert: 'Match cleared!',
+        hamsters: {
+          warrior: 'Warrior',
+          archer: 'Archer',
+          mage: 'Mage',
+          dragon: 'Dragon',
+          seed: 'Money Seed'
+        },
+        inventoryNames: {
+          warrior: 'Hamster Warrior',
+          archer: 'Hamster Archer',
+          mage: 'Hamster Mage',
+          dragon: 'Hamster Dragon',
+          seed: 'Money Seed'
+        },
+        shopItems: {
+          mageName: 'Hamster Mage',
+          mageText: 'Fires a magical ice arrow and deals splash damage.',
+          dragonName: 'Hamster Dragon',
+          dragonText: 'Burns the nearest target, ramping damage every second.',
+          seedName: 'Money Seed',
+          seedText: 'Does not attack, but gives extra battle coins each wave.'
+        }
+      },
+      uk: {
+        menuSubtitle: "Захисти замок хом'яків",
+        pc: 'ПК',
+        phone: 'Телефон',
+        play: '🛡️ Грати',
+        inventory: '🎒 Інвентар',
+        shop: '🛒 Магазин',
+        languageButton: '🇬🇧 English language',
+        levelSelect: 'Вибір рівня',
+        back: 'Назад',
+        inventoryTitle: 'Інвентар',
+        inventoryDefault: "Натисни на хом'яка, щоб покласти його в колоду.",
+        yes: 'Так',
+        no: 'Ні',
+        close: 'Закрити',
+        shopTitle: 'Магазин',
+        deck: 'Колода',
+        skip: 'Скіп',
+        menu: 'В меню',
+        startWave: '▶️ Почати хвилю',
+        waveCleared: 'Хвилю відбито!',
+        nextWave: 'Наступна хвиля',
+        matchCleared: 'Матч пройдено!',
+        level: 'Рівень',
+        wave: 'Хвиля',
+        lockedLevel: 'Пройди рівень {level}',
+        levelTitle: 'Рівень {level}',
+        bought: 'Куплено',
+        buyFor: 'Купити за {price} 🪙',
+        notEnoughCoins: 'Не вистачає монет!',
+        putInDeck: 'Поставити "{name}" в колоду?',
+        alreadyInDeck: '{name} вже є в колоді.',
+        deckFull: 'Колода вже заповнена.',
+        addedToDeck: '{name} додано в колоду.',
+        needDeck: "Спочатку поклади хом'яка в колоду через інвентар!",
+        need100: 'Потрібно 100 монет!',
+        totalLimit: "Усього можна поставити тільки 13 хом'яків.",
+        archerLimit: 'Ліміт лучників: 4.',
+        mageLimit: 'Ліміт магів: 4.',
+        dragonLimit: 'Ліміт драконів: 3.',
+        seedLimit: 'Ліміт грошових зернят: 3.',
+        warriorLimit: 'Ліміт воїнів: 4.',
+        upgradeReady: "Можна покращити хом'яка.",
+        maxLevel: 'Максимальний рівень.',
+        seedIncome: 'Дохід за хвилю: {income} 🪙',
+        seedMaxIncome: 'Максимальний дохід: {income} 🪙',
+        sell: 'Продаж: {price} 🪙',
+        upgradeFor: 'Покращити за {cost} 🪙',
+        sellFor: 'Продати за {price} 🪙',
+        cannotSellWave: 'Під час хвилі продавати не можна.',
+        placeOne: "Постав хоча б одного хом'яка!",
+        bossLose: 'Бос прорвався до замку! Поразка.',
+        castleLose: 'Замок упав!',
+        matchAlert: 'Матч пройдено!',
+        hamsters: {
+          warrior: 'Воїн',
+          archer: 'Лучник',
+          mage: 'Маг',
+          dragon: 'Дракон',
+          seed: 'Грошове зернятко'
+        },
+        inventoryNames: {
+          warrior: "Хом'як воїн",
+          archer: "Хом'як лучник",
+          mage: "Хом'як маг",
+          dragon: "Хом'як дракон",
+          seed: 'Грошове зернятко'
+        },
+        shopItems: {
+          mageName: "Хом'як маг",
+          mageText: "Стріляє магічною крижаною стрілою і б'є по області.",
+          dragonName: "Хом'як дракон",
+          dragonText: 'Випалює найближчу ціль, розганяючи урон щосекунди.',
+          seedName: 'Грошове зернятко',
+          seedText: 'Не атакує, але дає додаткові бойові монети за кожну хвилю.'
+        }
+      }
+    };
+
+    const savedLanguage = localStorage.getItem('hamster-defense-language');
+    let gameLanguage = I18N[savedLanguage] ? savedLanguage : 'en';
+
+    function t(key, params = {}) {
+      const value = key.split('.').reduce((obj, part) => obj?.[part], I18N[gameLanguage]) ?? key;
+      return Object.entries(params).reduce((text, [name, paramValue]) => text.replaceAll(`{${name}}`, paramValue), value);
+    }
+
     // Картинки хомяков: обычное состояние и 2 кадра атаки.
     const ASSETS = {
-      warrior: { stand: 'warior.png', anim1: 'anim_war-removebg-preview.png', anim2: 'anim_war2-removebg-preview.png' },
+      warrior: { stand: 'warrior_stand.png', anim1: 'warrior_attack1.png', anim2: 'warrior_attack2.png' },
       archer: { stand: 'arrow.png', anim1: 'anim_arow1-removebg-preview.png', anim2: 'anim_arow2-removebg-preview.png' },
       mage: { stand: 'Homa01-removebg-preview.png', anim1: 'Homa02-removebg-preview.png', anim2: 'Homa03-removebg-preview.png' },
       dragon: { stand: 'fhoma-removebg-preview.png', anim1: 'fhoma1-removebg-preview.png', anim2: 'fhoma2-removebg-preview.png' },
@@ -1131,7 +1307,7 @@
     const HAMSTERS = {
       warrior: {
         name: 'Воин',
-        img: 'warior.png'
+        img: 'warrior_stand.png'
       },
       archer: {
         name: 'Лучник',
@@ -1153,22 +1329,22 @@
 
     const SHOP_CLASSES = {
       mage: {
-        name: 'Хомяк маг',
+        nameKey: 'shopItems.mageName',
         price: 300,
         img: 'Homa01-removebg-preview.png',
-        text: 'Стреляет магической ледяной стрелой и бьет по области.'
+        textKey: 'shopItems.mageText'
       },
       dragon: {
-        name: 'Хомяк дракон',
+        nameKey: 'shopItems.dragonName',
         price: 500,
         img: 'fhoma-removebg-preview.png',
-        text: 'Выжигает ближайшую цель, разгоняя урон каждую секунду.'
+        textKey: 'shopItems.dragonText'
       },
       seed: {
-        name: 'Денежное семечко',
+        nameKey: 'shopItems.seedName',
         price: 350,
         img: 'money_seed.png',
-        text: 'Не атакует, но приносит дополнительные боевые монеты за каждую волну.'
+        textKey: 'shopItems.seedText'
       }
     };
 
@@ -1307,6 +1483,7 @@
     let saveTimer = null;
     let lastFrame = performance.now();
     let mobilePerformanceMode = false;
+    let lastSkipDisabled = true;
     let layoutMode = localStorage.getItem('hamster-defense-layout-mode') || getDefaultLayoutMode();
 
     function getDefaultLayoutMode() {
@@ -1346,8 +1523,53 @@
       if (!pcButton || !phoneButton) return;
       pcButton.classList.toggle('active', layoutMode === 'pc');
       phoneButton.classList.toggle('active', layoutMode === 'phone');
+      pcButton.textContent = t('pc');
+      phoneButton.textContent = t('phone');
       document.body.classList.toggle('layout-pc', layoutMode === 'pc');
       document.body.classList.toggle('layout-phone', layoutMode === 'phone');
+    }
+
+    function toggleLanguage() {
+      gameLanguage = gameLanguage === 'en' ? 'uk' : 'en';
+      localStorage.setItem('hamster-defense-language', gameLanguage);
+      applyLanguage();
+    }
+
+    function getHamsterName(type) {
+      return t(`hamsters.${type}`);
+    }
+
+    function getInventoryName(type) {
+      return t(`inventoryNames.${type}`);
+    }
+
+    function applyLanguage() {
+      document.documentElement.lang = gameLanguage === 'uk' ? 'uk' : 'en';
+      document.getElementById('menu-subtitle').textContent = t('menuSubtitle');
+      document.getElementById('play-btn').textContent = t('play');
+      document.getElementById('inventory-btn').textContent = t('inventory');
+      document.getElementById('shop-btn').textContent = t('shop');
+      document.getElementById('language-btn').textContent = t('languageButton');
+      document.getElementById('level-title').textContent = t('levelSelect');
+      document.getElementById('level-back-btn').textContent = t('back');
+      document.getElementById('inventory-title').textContent = t('inventoryTitle');
+      document.getElementById('confirm-yes-btn').textContent = t('yes');
+      document.getElementById('confirm-no-btn').textContent = t('no');
+      document.getElementById('inventory-close-btn').textContent = t('close');
+      document.getElementById('shop-title').textContent = t('shopTitle');
+      document.getElementById('shop-close-btn').textContent = t('close');
+      document.getElementById('skip-wave-btn').textContent = t('skip');
+      document.getElementById('exit-menu-btn').textContent = t('menu');
+      document.getElementById('start-btn').textContent = t('startWave');
+      document.querySelector('.deck').setAttribute('aria-label', t('deck'));
+      updateLayoutButtons();
+      cancelAddToDeck();
+      renderDeck();
+      renderLevelMenu();
+      renderInventory();
+      renderShop();
+      updateWaveLabel();
+      if (selectedPlacedSlot !== null) openUpgradePanel(selectedPlacedSlot);
     }
 
     // Возвращает id аккаунта Telegram. Если игра открыта не в Telegram, будет local.
@@ -1393,6 +1615,8 @@
       updateBattleGold();
       updateWaveLabel();
       renderDeck();
+      renderInventory();
+      renderShop();
     }
 
     // Загружает прогресс: сначала с сервера бота, если он есть, потом из localStorage.
@@ -1465,7 +1689,7 @@
         const locked = level > unlockedLevel;
         button.className = `level-dot ${getBiome(level)}${locked ? ' locked' : ''}`;
         button.textContent = locked ? '🔒' : level;
-        button.title = locked ? `Пройди уровень ${level - 1}` : `Уровень ${level}`;
+        button.title = locked ? t('lockedLevel', { level: level - 1 }) : t('levelTitle', { level });
         button.onclick = () => {
           if (locked) return;
           enterBattle(level);
@@ -1490,26 +1714,28 @@
 
     function renderInventory() {
       const grid = document.getElementById('inventory-grid');
+      if (!grid) return;
       grid.innerHTML = ownedClasses.map(type => `
         <div class="inventory-card" onclick="askAddToDeck('${type}')">
           <img src="${HAMSTERS[type].img}" alt="">
-          <b>Хомяк ${HAMSTERS[type].name.toLowerCase()}</b>
+          <b>${getInventoryName(type)}</b>
         </div>
       `).join('');
     }
 
     function renderShop() {
       const shop = document.getElementById('shop-content');
+      if (!shop) return;
       shop.innerHTML = `<p class="menu-coins">🪙 ${menuGold}</p>` + Object.entries(SHOP_CLASSES).map(([type, item]) => {
         const owned = ownedClasses.includes(type);
         return `
           <div class="shop-card">
             <img src="${item.img}" alt="">
             <div>
-              <h3>${item.name}</h3>
-              <p>${item.text}</p>
+              <h3>${t(item.nameKey)}</h3>
+              <p>${t(item.textKey)}</p>
               <button onclick="buyClass('${type}')" ${owned ? 'disabled' : ''}>
-                ${owned ? 'Куплено' : `Купить за ${item.price} 🪙`}
+                ${owned ? t('bought') : t('buyFor', { price: item.price })}
               </button>
             </div>
           </div>
@@ -1521,7 +1747,7 @@
       const item = SHOP_CLASSES[type];
       if (!item || ownedClasses.includes(type)) return;
       if (menuGold < item.price) {
-        alert('Не хватает монет!');
+        alert(t('notEnoughCoins'));
         return;
       }
       menuGold -= item.price;
@@ -1536,7 +1762,7 @@
     function askAddToDeck(type) {
       if (!ownedClasses.includes(type)) return;
       pendingDeckType = type;
-      document.getElementById('inventory-message').textContent = `Поставить "${HAMSTERS[type].name}" в колоду?`;
+      document.getElementById('inventory-message').textContent = t('putInDeck', { name: getHamsterName(type) });
       document.getElementById('deck-confirm').style.display = 'grid';
     }
 
@@ -1544,18 +1770,18 @@
     function confirmAddToDeck() {
       if (!pendingDeckType) return;
       if (deckCards.includes(pendingDeckType)) {
-        document.getElementById('inventory-message').textContent = `${HAMSTERS[pendingDeckType].name} уже есть в колоде.`;
+        document.getElementById('inventory-message').textContent = t('alreadyInDeck', { name: getHamsterName(pendingDeckType) });
         pendingDeckType = null;
         document.getElementById('deck-confirm').style.display = 'none';
         return;
       }
       if (deckCards.length >= 5) {
-        document.getElementById('inventory-message').textContent = 'Колода уже заполнена.';
+        document.getElementById('inventory-message').textContent = t('deckFull');
         return;
       }
       deckCards.push(pendingDeckType);
       renderDeck();
-      document.getElementById('inventory-message').textContent = `${HAMSTERS[pendingDeckType].name} добавлен в колоду.`;
+      document.getElementById('inventory-message').textContent = t('addedToDeck', { name: getHamsterName(pendingDeckType) });
       pendingDeckType = null;
       document.getElementById('deck-confirm').style.display = 'none';
       saveProgress();
@@ -1563,14 +1789,14 @@
 
     function cancelAddToDeck() {
       pendingDeckType = null;
-      document.getElementById('inventory-message').textContent = 'Нажми на хомяка, чтобы положить его в колоду.';
+      document.getElementById('inventory-message').textContent = t('inventoryDefault');
       document.getElementById('deck-confirm').style.display = 'none';
     }
 
     // Запускает бой из главного меню.
     async function enterBattle(levelNumber = currentLevel) {
       if (deckCards.length === 0) {
-        alert('Сначала положи хомяка в колоду через инвентарь!');
+        alert(t('needDeck'));
         return;
       }
       if (layoutMode === 'phone') await requestGameFullscreen();
@@ -1775,9 +2001,10 @@
       running = false;
       currentWaveTotal = getWaveConfig(wave).count + (getWaveConfig(wave).boss ? 1 : 0);
       targetKills = currentWaveTotal;
+      lastSkipDisabled = false;
       document.getElementById('win-screen').style.display = 'none';
-      document.querySelector('#win-screen h2').textContent = 'Волна отбита!';
-      document.querySelector('#win-screen button').textContent = 'Следующая волна';
+      document.querySelector('#win-screen h2').textContent = t('waveCleared');
+      document.querySelector('#win-screen button').textContent = t('nextWave');
       document.getElementById('start-btn').disabled = false;
       updateHp();
       updateWaveLabel();
@@ -1800,8 +2027,8 @@
         card.innerHTML = `
           <div class="deck-card-inner">
             <div class="deck-card-face deck-card-front">
-              <img src="${HAMSTERS[type].img}" alt="">
-              <span>${HAMSTERS[type].name}</span>
+              <img class="${type === 'warrior' ? 'warrior-sprite' : ''}" src="${HAMSTERS[type].img}" alt="">
+              <span>${getHamsterName(type)}</span>
             </div>
           </div>
         `;
@@ -1826,11 +2053,11 @@
     }
 
     function placeSelectedHamster(slotIndex) {
-      if (running || placed[slotIndex] || selectedDeckCard === null) return;
+      if (placed[slotIndex] || selectedDeckCard === null) return;
       const type = deckCards[selectedDeckCard];
       if (!type) return;
       if (battleGold < 100) {
-        alert('Нужно 100 монет!');
+        alert(t('need100'));
         return;
       }
       const limitMessage = getPlacementLimitMessage(type);
@@ -1843,7 +2070,7 @@
 
     function placeHamsterOnSlot(slotIndex, type) {
       const slot = document.getElementById('slot-' + slotIndex);
-      if (!slot || slot.classList.contains('road-cell') || placed[slotIndex] || running) return;
+      if (!slot || slot.classList.contains('road-cell') || placed[slotIndex]) return;
       battleGold -= 100;
       updateBattleGold();
       placed[slotIndex] = { type, level: 1 };
@@ -1856,15 +2083,15 @@
     // Проверяет лимиты: всего 13, воинов 4, лучников 4.
     function getPlacementLimitMessage(type) {
       const totalPlaced = placed.filter(Boolean).length;
-      if (totalPlaced >= HAMSTER_LIMITS.total) return 'Всего можно поставить только 13 хомяков.';
+      if (totalPlaced >= HAMSTER_LIMITS.total) return t('totalLimit');
 
       const typePlaced = placed.filter(hamster => hamster && hamster.type === type).length;
       if (typePlaced >= HAMSTER_LIMITS[type]) {
-        if (type === 'archer') return 'Лимит лучников: 4.';
-        if (type === 'mage') return 'Лимит магов: 4.';
-        if (type === 'dragon') return 'Лимит драконов: 3.';
-        if (type === 'seed') return 'Лимит денежных семечек: 3.';
-        return 'Лимит мечников: 4.';
+        if (type === 'archer') return t('archerLimit');
+        if (type === 'mage') return t('mageLimit');
+        if (type === 'dragon') return t('dragonLimit');
+        if (type === 'seed') return t('seedLimit');
+        return t('warriorLimit');
       }
 
       return '';
@@ -1885,14 +2112,14 @@
       panel.style.left = Math.max(8, slot.offsetLeft - 202) + 'px';
       panel.style.top = Math.max(8, Math.min(390, slot.offsetTop - 12)) + 'px';
       panel.innerHTML = `
-        <h3>${HAMSTERS[hamster.type].name} ${hamster.level} ур.</h3>
+        <h3>${getHamsterName(hamster.type)} ${hamster.level}</h3>
         <ul>
           <li>${getUpgradePanelText(hamster)}</li>
-          <li>Продажа: ${getHamsterSellPrice(hamster)} 🪙</li>
+          <li>${t('sell', { price: getHamsterSellPrice(hamster) })}</li>
         </ul>
-        ${nextCost ? `<button onclick="upgradeSelectedHamster()">Улучшить за ${nextCost} 🪙</button>` : ''}
-        <button class="sell-hamster" onclick="sellSelectedHamster()">Продать за ${getHamsterSellPrice(hamster)} 🪙</button>
-        <button class="close-upgrade" onclick="closeUpgradePanel()">Закрыть</button>
+        ${nextCost ? `<button onclick="upgradeSelectedHamster()">${t('upgradeFor', { cost: nextCost })}</button>` : ''}
+        <button class="sell-hamster" onclick="sellSelectedHamster()">${t('sellFor', { price: getHamsterSellPrice(hamster) })}</button>
+        <button class="close-upgrade" onclick="closeUpgradePanel()">${t('close')}</button>
       `;
       panel.style.display = 'block';
     }
@@ -1901,9 +2128,9 @@
       const nextCost = UPGRADE_COSTS[hamster.level + 1];
       if (hamster.type === 'seed') {
         const income = getHamsterStats(hamster).income;
-        return nextCost ? `Доход за волну: ${income} 🪙` : `Максимальный доход: ${income} 🪙`;
+        return nextCost ? t('seedIncome', { income }) : t('seedMaxIncome', { income });
       }
-      return nextCost ? 'Можно улучшить хомяка.' : 'Максимальный уровень.';
+      return nextCost ? t('upgradeReady') : t('maxLevel');
     }
 
     function closeUpgradePanel() {
@@ -1916,7 +2143,7 @@
       if (!hamster || hamster.level >= 5) return;
       const cost = UPGRADE_COSTS[hamster.level + 1];
       if (battleGold < cost) {
-        alert('Не хватает монет!');
+        alert(t('notEnoughCoins'));
         return;
       }
       battleGold -= cost;
@@ -1941,10 +2168,6 @@
     }
 
     function sellSelectedHamster() {
-      if (running) {
-        alert('Во время волны продавать нельзя.');
-        return;
-      }
       const slotIndex = selectedPlacedSlot;
       const hamster = placed[slotIndex];
       if (!hamster) return;
@@ -2001,13 +2224,14 @@
     function setHamsterImage(slotIndex, state) {
       const hamster = placed[slotIndex];
       if (!hamster) return;
-      document.getElementById('slot-' + slotIndex).innerHTML = `<img src="${ASSETS[hamster.type][state]}" alt="">`;
+      const spriteClass = hamster.type === 'warrior' ? ' class="warrior-sprite"' : '';
+      document.getElementById('slot-' + slotIndex).innerHTML = `<img${spriteClass} src="${ASSETS[hamster.type][state]}" alt="">`;
     }
 
     // Запускает текущую волну врагов.
     function startWave() {
       if (!placed.some(Boolean)) {
-        alert('Поставь хотя бы одного хомяка!');
+        alert(t('placeOne'));
         return;
       }
 
@@ -2129,7 +2353,8 @@
 
     // Двигает врагов по точкам дороги.
     function moveEnemies(dt) {
-      [...enemies].forEach(enemy => {
+      const movingEnemies = enemies.slice();
+      movingEnemies.forEach(enemy => {
         if (enemy.dead) return;
         let remaining = enemy.speed * dt;
 
@@ -2405,10 +2630,7 @@
       if (enemy.dead) return;
       enemy.hp -= amount;
       if (enemy.hp <= 0) {
-        enemy.dead = true;
-        clearDragonChannelsForEnemy(enemy);
-        enemy.el.remove();
-        enemies = enemies.filter(item => item !== enemy);
+        removeEnemy(enemy);
         killed++;
         finishedEnemies++;
         currentWaveFinished++;
@@ -2423,27 +2645,30 @@
     // Враг дошел до замка: наносит урон, а босс сразу проигрывает матч.
     function damageCastle(enemy) {
       if (enemy.isBoss) {
-        enemy.dead = true;
-        clearDragonChannelsForEnemy(enemy);
-        enemy.el.remove();
-        enemies = enemies.filter(item => item !== enemy);
-        alert('Босс прорвался к замку! Поражение.');
+        removeEnemy(enemy);
+        alert(t('bossLose'));
         location.reload();
         return;
       }
       hp -= enemy.dmg;
       updateHp();
-      enemy.dead = true;
-      clearDragonChannelsForEnemy(enemy);
-      enemy.el.remove();
-      enemies = enemies.filter(item => item !== enemy);
+      removeEnemy(enemy);
       finishedEnemies++;
       currentWaveFinished++;
       updateSkipButton();
       if (hp <= 0) {
-        alert('Замок пал!');
+        alert(t('castleLose'));
         location.reload();
       }
+    }
+
+    function removeEnemy(enemy) {
+      if (!enemy || enemy.dead) return;
+      enemy.dead = true;
+      clearDragonChannelsForEnemy(enemy);
+      enemy.el.remove();
+      const index = enemies.indexOf(enemy);
+      if (index !== -1) enemies.splice(index, 1);
     }
 
     // Завершает волну и выдает бонус монет за состояние замка.
@@ -2454,8 +2679,8 @@
       if (!skipRewardPaid) battleGold += (hp >= 100 ? 300 : 200) + getSeedWaveIncome();
       updateBattleGold();
       if (wave >= 5) {
-        document.querySelector('#win-screen h2').textContent = 'Матч пройден!';
-        document.querySelector('#win-screen button').textContent = 'В меню';
+        document.querySelector('#win-screen h2').textContent = t('matchCleared');
+        document.querySelector('#win-screen button').textContent = t('menu');
         menuGold += LEVEL_WIN_MENU_REWARD;
         updateMenuGold();
         if (currentLevel >= unlockedLevel && unlockedLevel < 30) {
@@ -2469,7 +2694,7 @@
     // Переход на следующую волну или завершение матча после 5-й.
     function nextWave() {
       if (wave >= 5) {
-        alert('Матч пройден!');
+        alert(t('matchAlert'));
         exitToMenu();
         return;
       }
@@ -2483,6 +2708,7 @@
       battleGold += (hp >= 100 ? 300 : 200) + getSeedWaveIncome();
       updateBattleGold();
       document.getElementById('skip-wave-btn').disabled = true;
+      lastSkipDisabled = true;
 
       if (wave >= 5) return;
       wave++;
@@ -2500,7 +2726,10 @@
     }
 
     function updateSkipButton() {
-      document.getElementById('skip-wave-btn').disabled = !canSkipWave();
+      const disabled = !canSkipWave();
+      if (disabled === lastSkipDisabled) return;
+      lastSkipDisabled = disabled;
+      document.getElementById('skip-wave-btn').disabled = disabled;
     }
 
     // Возвращает из боя в главное меню.
@@ -2520,6 +2749,7 @@
       gameSpeed = 1;
       document.getElementById('speed-btn').classList.remove('active');
       document.getElementById('skip-wave-btn').disabled = true;
+      lastSkipDisabled = true;
       selectedDeckCard = null;
       if (dragGhost) dragGhost.remove();
       dragGhost = null;
@@ -2556,7 +2786,7 @@
 
     // Обновляет надпись "Волна X/5".
     function updateWaveLabel() {
-      document.getElementById('wave-label').textContent = `Уровень ${currentLevel} | Волна ${wave}/5`;
+      document.getElementById('wave-label').textContent = `${t('level')} ${currentLevel} | ${t('wave')} ${wave}/5`;
       saveProgress();
     }
 
@@ -2640,6 +2870,7 @@
     });
     window.Telegram?.WebApp?.ready?.();
     window.Telegram?.WebApp?.expand?.();
+    applyLanguage();
     updateMenuOrientation();
     loadProgress();
     requestAnimationFrame(gameLoop);
